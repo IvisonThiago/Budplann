@@ -1,0 +1,83 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="LayoutPadrao.master.cs" Inherits="LayoutPadrao" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Bud & Plan</title>
+
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="Bootstrap/js/jquery-1.11.3.min.js"></script>
+    <script src="Bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript">window.history.go(1)</script>
+
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        
+        <!-- inicio da barra do menu -->
+       <nav class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="#"> Sistema Financeiro Pessoal </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Alterna navegação">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="home.aspx">Home <span class="sr-only">(Página atual)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Lançamentos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="principal.aspx">Preços</a>
+      </li>
+       <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Lançamentos
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="despesas.aspx">Despesas</a>
+          <a class="dropdown-item" href="Teste.aspx">Receita</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Cadastros
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Usuários</a>
+          <a class="dropdown-item" href="#">Cartão</a>
+          <a class="dropdown-item" href="#">Segmento</a>
+        </div>
+      </li>
+       <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Consultas
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">Usuário</a>
+          <a class="dropdown-item" href="#">Cartão</a>
+          <a class="dropdown-item" href="#">Segmento</a>
+        </div>
+      </li>
+         <li class="nav-item">
+        <a class="nav-link" href="#"><asp:Button Text="Sair" CommandName="logoff" runat="server" OnClick="logoff_Click" /></a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<!-- fim da barra do menu -->
+
+
+        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+    </div>
+    </form>
+</body>
+</html>
