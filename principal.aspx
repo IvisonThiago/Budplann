@@ -50,7 +50,7 @@
                         <a class="nav-link" href="javascript:void(0);"><i class="far fa-chart-bar"></i>Charts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#;"><i class="bi bi-speedometer"></i>Dashboard</a>
+                        <a class="nav-link" href="dashboard.html"><i class="bi bi-speedometer"></i>Dashboard</a>
                     </li>
                 </ul>
             </div>

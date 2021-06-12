@@ -91,17 +91,17 @@ public partial class cadastros : System.Web.UI.Page
 
             var usarioLogado = Session["Usuario"];
 
-            if (usarioLogado != null)
-            {
-                labelUsuariologado.Text = usarioLogado.ToString();
-                statusUsuario.Visible = true;
-                statusUsuarioDeslogado.Visible = false;
-            }
-            else
-            {
-                statusUsuario.Visible = false;
-                statusUsuarioDeslogado.Visible = true;
-            }
+            //if (usarioLogado != null)
+            //{
+            //    labelUsuariologado.Text = usarioLogado.ToString();
+            //    statusUsuario.Visible = true;
+            //    statusUsuarioDeslogado.Visible = false;
+            //}
+            //else
+            //{
+            //    statusUsuario.Visible = false;
+            //    statusUsuarioDeslogado.Visible = true;
+            //}
         }
     }
     #endregion

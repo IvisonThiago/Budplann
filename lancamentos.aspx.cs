@@ -76,6 +76,12 @@ public partial class lancamentos : System.Web.UI.Page
         ddlCompetencia.SelectedValue = "0";
         ddlSegmento.SelectedValue = "0";
     }
+    private void limparDadosModal()
+    {
+        txtPesquisa1.Value = string.Empty;
+        txtPesquisa2.Value = string.Empty;
+        ddlFiltroCompetencia.SelectedValue = "0";
+    }
     public void logoff()
     {
         Session.Abandon();
@@ -83,14 +89,34 @@ public partial class lancamentos : System.Web.UI.Page
         FormsAuthentication.SignOut();
         Response.Redirect("index.aspx", true);
     }
-    private void carregaGridDespesas()
+    private void carregaGridDespesasFiltro()
     {
         int codSessao = Convert.ToInt32(Session["codUser"]);
+        DateTime data1 = Convert.ToDateTime(txtPesquisa1.Value);
+        DateTime data2 = Convert.ToDateTime(txtPesquisa2.Value);
+        var competencia = ddlFiltroCompetencia.SelectedItem.ToString();
 
         using (var conexao = new BudplannEntities())
         {
-            var listarTbDespesas = conexao.tb_lancamento_despesas.Where(x => x.cd_user == codSessao).ToList();
-            grvDespesas.DataSource = listarTbDespesas.ToList();
+            var listarDespesas = conexao.tb_lancamento_despesas.Where
+            (x => x.cd_user == codSessao
+            && x.dt_compra >= data1
+            && x.dt_compra <= data2
+            && x.ds_competencia == competencia).OrderByDescending(x => x.cd_lancamento_despesa).ToList();
+
+            grvDespesas.DataSource = listarDespesas;
+            grvDespesas.DataBind();
+        }
+    }
+    private void carregaDepesaSalva()
+    {
+        int codSessao = Convert.ToInt32(Session["codUser"]);
+        using (var conexao = new BudplannEntities())
+        {
+            var listarDespesas2 = conexao.tb_lancamento_despesas.Where
+            (x => x.cd_user == codSessao).OrderByDescending(x => x.cd_lancamento_despesa).ToList().Take(1);
+
+            grvDespesas.DataSource = listarDespesas2.ToList();
             grvDespesas.DataBind();
         }
     }
@@ -124,18 +150,18 @@ public partial class lancamentos : System.Web.UI.Page
             //---------------------------------------------------------
 
             //-----barra superior de status----------------------------
-            var usarioLogado = Session["Usuario"];
-            if (usarioLogado != null)
-            {
-                labelUsuariologado.Text = usarioLogado.ToString();
-                statusUsuario.Visible = true;
-                statusUsuarioDeslogado.Visible = false;
-            }
-            else
-            {
-                statusUsuario.Visible = false;
-                statusUsuarioDeslogado.Visible = true;
-            }
+            //var usarioLogado = Session["Usuario"];
+            //if (usarioLogado != null)
+            //{
+            //    labelUsuariologado.Text = usarioLogado.ToString();
+            //    statusUsuario.Visible = true;
+            //    statusUsuarioDeslogado.Visible = false;
+            //}
+            //else
+            //{
+            //    statusUsuario.Visible = false;
+            //    statusUsuarioDeslogado.Visible = true;
+            //}
             //---------------------------------------------------------
         }
 
@@ -224,6 +250,8 @@ public partial class lancamentos : System.Web.UI.Page
             divAlerta.Visible = true;
             labelAlerta.Text = "Ae fica sussa que seu lançamento foi registrado.";
             limparFormLancamentoDespesa();
+            divGridDespesas.Visible = true;
+            carregaDepesaSalva();
         }
         else
         {
@@ -232,42 +260,59 @@ public partial class lancamentos : System.Web.UI.Page
             limparFormLancamentoDespesa();
             return;
         }
-
-
     }
-    #endregion
     protected void grvDespesas_RowDeleting(object sender, GridViewDeleteEventArgs e)
     {
-        var codDespesa = Convert.ToInt32(e.Values["cd_lancamento_despesa"]);
-
+        var codLancamento = Convert.ToInt32(e.Values["codLancamento"]);
         using (var conexao = new BudplannEntities())
         {
-            var excluirDespesa = conexao.tb_lancamento_despesas.Single(x => x.cd_lancamento_despesa == codDespesa);
+            var excluirDespesa = conexao.tb_lancamento_despesas.Single(x => x.cd_lancamento_despesa == codLancamento);
             conexao.tb_lancamento_despesas.Remove(excluirDespesa);
             conexao.SaveChanges();
         }
-        carregaGridDespesas();
+        carregaGridDespesasFiltro();
     }
     protected void grvDespesas_PageIndexChanging(object sender, GridViewPageEventArgs e)
     {
         grvDespesas.PageIndex = e.NewPageIndex;
-        carregaGridDespesas();
+        carregaGridDespesasFiltro();
         divAlerta.Visible = false;
     }
-    protected void btnPesquisarDespesas_Click(object sender, ImageClickEventArgs e)
+    protected void btnFecharDespesas_Click(object sender, EventArgs e)
     {
-        var codUsuario = Session["codUser"];
-        if (codUsuario != null)
+        divGridDespesas.Visible = false;
+        divAlerta.Visible = false;
+    }
+    #endregion
+    protected void btnRealizarPesquisa_Click(object sender, EventArgs e)
+    {
+        if (txtPesquisa1.Value != string.Empty && txtPesquisa2.Value != string.Empty)
         {
-            divGridDespesas.Visible = true;
-            carregaGridDespesas();
+            if (ddlFiltroCompetencia.SelectedValue != "0")
+            {
+                divAlerta.Visible = false;
+                divGridDespesas.Visible = true;
+                carregaGridDespesasFiltro();
+
+            }
+            else
+            {
+                divAlerta.Visible = true;
+                labelAlerta.Text = "Ohh Manezão. Para efetivar a pesquisa informe uma competência.";
+                return;
+            }
         }
         else
         {
             divAlerta.Visible = true;
-            labelAlerta.Text = "Timeout. Sua sessão foi expirada, favor conectar novamente.";
-            limparFormLancamentoDespesa();
+            labelAlerta.Text = "Ohh Manezão. Para efetivar a pesquisa é necessário informar uma data inicial e final!";
             return;
         }
     }
+    protected void btnFecharModal_Click(object sender, EventArgs e)
+    {
+        limparDadosModal();
+        divAlerta.Visible = false;
+    }
+
 }

@@ -19,18 +19,18 @@
     <title>Lançamentos</title>
 
 </head>
-<body>
+<body style="height: auto">
     <div>
         <form runat="server" id="formLanca">
             <header>
-                <!-- Inicio da barraStatus -->
+                <%--                <!-- Inicio da barraStatus -->
                 <div class="container-fluid" style="background-color: #5161ce;">
                     <div class="d-flex flex-row bd-highlight mb-3">
                         <div class="p-2 bd-highlight" style="margin-top: 08px">
-                            <asp:ImageButton runat="server" ID="btnHm" ImageUrl="~/img/casa2.png" Height="40px" Width="40px" OnClick="btnHm_Click" />
+                            <asp:ImageButton runat="server" ID="btnHm" ImageUrl="~/img/casa2.png" Height="40px" Width="40px" OnClick="btnHm_Click" title="Inicio" />
                         </div>
-                        <div class="p-2 bd-highlight" style="margin-top: 08px">
-                            <asp:ImageButton runat="server" ID="btnLogoff" ImageUrl="~/img/logoff.png" Height="40px" Width="40px" OnClick="btnLogoff_Click" />
+                        <div class="p-2 bd-highlight" style="margin-top: 13px">
+                            <asp:ImageButton runat="server" ID="btnLogoff" ImageUrl="~/img/logoff.png" Height="30px" Width="30px" OnClick="btnLogoff_Click" title="Sair" />
                         </div>
 
                         <div runat="server" id="statusUsuarioDeslogado" class="p-2 bd-highlight" style="width: 100%; text-align: right">
@@ -47,7 +47,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Fim da barraStatus -->
+                <!-- Fim da barraStatus -->--%>
                 <!-- Alertas -->
                 <div runat="server" id="divAlerta" class="alert alert-warning alert-dismissible" role="alert">
                     <asp:Label runat="server" ID="labelAlerta"></asp:Label>
@@ -124,6 +124,15 @@
                                                 <asp:ListItem Value="1" Text="Janeiro"></asp:ListItem>
                                                 <asp:ListItem Value="2" Text="Fevereiro"></asp:ListItem>
                                                 <asp:ListItem Value="3" Text="Março"></asp:ListItem>
+                                                <asp:ListItem Value="4" Text="Abril"></asp:ListItem>
+                                                <asp:ListItem Value="5" Text="Maio"></asp:ListItem>
+                                                <asp:ListItem Value="6" Text="Junho"></asp:ListItem>
+                                                <asp:ListItem Value="7" Text="Julho"></asp:ListItem>
+                                                <asp:ListItem Value="8" Text="Agosto"></asp:ListItem>
+                                                <asp:ListItem Value="9" Text="Setembro"></asp:ListItem>
+                                                <asp:ListItem Value="10" Text="Outubro"></asp:ListItem>
+                                                <asp:ListItem Value="11" Text="Novembro"></asp:ListItem>
+                                                <asp:ListItem Value="12" Text="Dezembro"></asp:ListItem>
                                             </asp:DropDownList>
                                         </div>
                                         <div class="form-group col-md-6">
@@ -140,26 +149,15 @@
                                             <asp:ImageButton runat="server" ID="btnLimpar" ImageUrl="~/img/borracha.png" Height="30px" Width="30px" OnClick="btnLimpar_Click" />
                                         </div>
                                         <div class="form-group col-md-1" style="margin-left: -40px">
-                                            <asp:ImageButton runat="server" ID="btnPesquisarDespesas" ImageUrl="~/img/lupa.png" Height="30px" Width="30px" title="Visualizar" OnClick="btnPesquisarDespesas_Click" />
+                                            <%--<asp:ImageButton runat="server" ID="btnPesquisarDespesas" ImageUrl="~/img/lupa.png" Height="30px" Width="30px" title="Visualizar" OnClick="btnPesquisarDespesas_Click" />--%>
+                                            <button type="button" data-toggle="modal" data-target="#modalFiltroPesquisa" style="border: none; background: none">
+                                                <img src="img/lupa.png" height="30px" width="30px" />
+                                            </button>
+                                        </div>
+                                        <div class="form-group col-md-1" style="margin-left: -40px">
+                                            <%--<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalFiltroPesquisa">Filtrar</button>--%>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- fim do formulário de despesas -->
-
-                        <!-- inicio do formulário de receitas -->
-                        <div class="card">
-                            <div class="card-header" id="headingTwo">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        Lançamento de Receitas
-                                    </button>
-                                </h5>
-                            </div>
-                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                                <div class="card-body">
-                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
                                 </div>
                             </div>
                         </div>
@@ -167,21 +165,118 @@
                     </div>
                 </div>
             </div>
+            <!-- Inicio Modal -->
+            <div class="modal fade" id="modalFiltroPesquisa" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Filtrar Pesquisa</h5>
+                            <%--<button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>--%>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="txtPesquisa1">Data Inicial</label>
+                                    <input type="date" runat="server" id="txtPesquisa1" class="form-control" />
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="txtPesquisa1">Data Final</label>
+                                    <input type="date" runat="server" id="txtPesquisa2" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="ddlFiltroCompetencia">Competência</label>
+                                    <asp:DropDownList runat="server" ID="ddlFiltroCompetencia" CssClass="form-control">
+                                        <asp:ListItem Value="0" Text="[Selecione]" Selected="True"></asp:ListItem>
+                                        <asp:ListItem Value="1" Text="Janeiro"></asp:ListItem>
+                                        <asp:ListItem Value="2" Text="Fevereiro"></asp:ListItem>
+                                        <asp:ListItem Value="3" Text="Março"></asp:ListItem>
+                                        <asp:ListItem Value="4" Text="Abril"></asp:ListItem>
+                                        <asp:ListItem Value="5" Text="Maio"></asp:ListItem>
+                                        <asp:ListItem Value="6" Text="Junho"></asp:ListItem>
+                                        <asp:ListItem Value="7" Text="Julho"></asp:ListItem>
+                                        <asp:ListItem Value="8" Text="Agosto"></asp:ListItem>
+                                        <asp:ListItem Value="9" Text="Setembro"></asp:ListItem>
+                                        <asp:ListItem Value="10" Text="Outubro"></asp:ListItem>
+                                        <asp:ListItem Value="11" Text="Novembro"></asp:ListItem>
+                                        <asp:ListItem Value="12" Text="Dezembro"></asp:ListItem>
+                                    </asp:DropDownList>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-4" style="padding-top: 35px">
+                                    <asp:Button runat="server" CssClass="btn btn-primary btn-sm" ID="btnRealizarPesquisa" Text="Pesquisar" OnClick="btnRealizarPesquisa_Click" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <asp:Button runat="server" ID="btnFecharModal" CssClass="btn btn-secondary" Text="Fechar" OnClick="btnFecharModal_Click" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fim do Modal -->
+            <%--            <!--Inicio do GridViwe Despesas -->
+            <div runat="server" class="card" id="divGridDespesas">
+                <div class="card-body">
+                    <asp:GridView ID="grvDespesas" runat="server" AutoGenerateColumns="False" CssClass="table table-light table-hover" AllowPaging="True" PageSize="10" OnPageIndexChanging="grvDespesas_PageIndexChanging" OnRowDeleting="grvDespesas_RowDeleting">
+                        <Columns>
+                            <asp:BoundField DataField="codLancamento" HeaderText="Cod">
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="despesa" HeaderText="Despesa" />
+                            <asp:BoundField DataField="origemDespesa" HeaderText="Origem" />
+                            <asp:BoundField DataField="formaPagamento" HeaderText="F. Pagamento" />
+                            <asp:BoundField DataField="cartao" HeaderText="Cartão">
+                                <HeaderStyle HorizontalAlign="Center" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="parcela" HeaderText="Parcela">
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="dataCompra" HeaderText="Data Compra" DataFormatString="{0:dd/MM/yyyy}" />
+                            <asp:BoundField DataField="competencia" HeaderText="Competência" />
+                            <asp:BoundField DataField="nomeSegmento" HeaderText="Segmento" />
+                            <asp:CommandField DeleteText="Deletar" HeaderText="Excluir" ShowDeleteButton="True" ButtonType="Image" DeleteImageUrl="~/img/delete.png">
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:CommandField>
+                            <asp:HyperLinkField DataNavigateUrlFields="codLancamento" DataNavigateUrlFormatString="edicao.aspx?codDespesa={0}" HeaderText="Editar" Text="<img src='img/editar.png' title='meu texto' />">
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:HyperLinkField>
+                        </Columns>
+                        <PagerSettings PageButtonCount="5" />
+                    </asp:GridView>
+                </div>
+                <div class="form-group col-md-6">
+                    <asp:Button runat="server" ID="btnFecharDespesas" Text="Fechar" CssClass="btn btn-primary btn-sm" OnClick="btnFecharDespesas_Click" />
+                </div>
+            </div>
+            <!--Fim do GridView Despesas -->--%>
+
             <!--Inicio do GridViwe Despesas -->
             <div runat="server" class="card" id="divGridDespesas">
                 <div class="card-body">
-                    <asp:GridView ID="grvDespesas" runat="server" AutoGenerateColumns="False" CssClass="table table-light table-hover" AllowPaging="True" PageSize="5" OnPageIndexChanging="grvDespesas_PageIndexChanging" OnRowDeleting="grvDespesas_RowDeleting">
+                    <asp:GridView ID="grvDespesas" runat="server" AutoGenerateColumns="False" CssClass="table table-light table-hover" AllowPaging="True" OnPageIndexChanging="grvDespesas_PageIndexChanging" OnRowDeleting="grvDespesas_RowDeleting">
                         <Columns>
-                            <asp:BoundField DataField="cd_lancamento_despesa" HeaderText="Código" />
+                            <asp:BoundField DataField="cd_lancamento_despesa" HeaderText="Cod">
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:BoundField>
                             <asp:BoundField DataField="nm_lancamento_despesa" HeaderText="Despesa" />
                             <asp:BoundField DataField="ds_origem_despesa" HeaderText="Origem" />
-                            <asp:BoundField DataField="ds_nota_fiscal" HeaderText="Nota Fiscal" />
-                            <asp:BoundField DataField="ds_forma_pagamento" HeaderText="Forma de Pagamento" />
-                            <asp:BoundField DataField="cd_cartao" HeaderText="Cartão" />
-                            <asp:BoundField DataField="cd_parcela" HeaderText="Parcela" />
-                            <asp:BoundField DataField="dt_compra" HeaderText="Data Compra" />
+                            <asp:BoundField DataField="ds_forma_pagamento" HeaderText="F. Pagamento" />
+                            <asp:BoundField DataField="tb_cartao.nm_cartao" HeaderText="Cartão">
+                                <HeaderStyle HorizontalAlign="Center" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="tb_parcelas.nr_parcelas" HeaderText="Parcela">
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="dt_compra" HeaderText="Data Compra" DataFormatString="{0:dd/MM/yyyy}" />
                             <asp:BoundField DataField="ds_competencia" HeaderText="Competência" />
-                            <asp:BoundField DataField="cd_segmento" HeaderText="Segmento" />
+                            <asp:BoundField DataField="tb_segmento.nm_segmento" HeaderText="Segmento" />
                             <asp:CommandField DeleteText="Deletar" HeaderText="Excluir" ShowDeleteButton="True" ButtonType="Image" DeleteImageUrl="~/img/delete.png">
                                 <ItemStyle HorizontalAlign="Center" />
                             </asp:CommandField>
@@ -193,7 +288,7 @@
                     </asp:GridView>
                 </div>
                 <div class="form-group col-md-6">
-                    <asp:Button runat="server" ID="btnFecharDespesas" Text="Fechar" CssClass="btn btn-primary" />
+                    <asp:Button runat="server" ID="btnFecharDespesas" Text="Fechar" CssClass="btn btn-primary btn-sm" OnClick="btnFecharDespesas_Click" />
                 </div>
             </div>
             <!--Fim do GridView Despesas -->

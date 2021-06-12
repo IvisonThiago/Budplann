@@ -67,12 +67,12 @@ public partial class _Default : System.Web.UI.Page
                     //Session["cod"] = existeUser.cd_user;
                     //Session["user"] = existeUser.nm_user;
                     
-                    Response.Redirect("principal.aspx");
+                    Response.Redirect("principall.aspx");
                 }
                 else
                 {
                     divAlerta.Visible = true;
-                    labelAlerta.Text = "Tu erroooouuuu... digite a sua senha corretamente.";
+                    labelAlerta.Text = "Que manezão errou a senha!! Para logar digite sua senha corretamente.";
                     //Response.Write("<script>alert('Usuário ou Senha invalidos');</script>"); //window.location='index.aspx'; para redirecionamento js 
                 }               
             }

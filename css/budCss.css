@@ -18,13 +18,13 @@
 
 #carouselHome {
     width: 700px;
-
-    margin-top: 80%;
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 1px 5px 30px rgb(195, 195, 195);
     text-align: center;
-    padding-top: 300px;
+    top: 270px;
+    height: 100%
+
 }
 #barraStatus {
     width: 200px;
@@ -32,5 +32,5 @@
     position: absolute;
     border: solid 20px;
     border-color: #ff0000;
-     box-shadow: 1px 5px 30px rgb(195, 195, 195);
+    box-shadow: 1px 5px 30px rgb(195, 195, 195);
 }
