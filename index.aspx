@@ -54,6 +54,10 @@
     <script src="Bootstrap/js/bootstrap.min.js"></script>
     <script src="js/jquery.sticky.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        if (window.top.location != window.location) //Verifica se a página pais é diferente da página do IFRAME
+            window.top.location.href = "index.aspx"
+    </script>
 
 </body>
 </html>

@@ -150,7 +150,7 @@ public partial class cadastros : System.Web.UI.Page
         else
         {
             divAlertaCadastroSucesso.Visible = true;
-            labelAlertacadastroSucesso.Text = "Timeout. Sem chance você foi desconectado! Conecte para realizar o cadastro";
+            labelAlertacadastroSucesso.Text = "TIMEOUT. Conexão expirada, favor conectar novamente.";
             limparForm();
             return;
         }
@@ -270,7 +270,7 @@ public partial class cadastros : System.Web.UI.Page
         else
         {
             divAlertaCadastroSucesso.Visible = true;
-            labelAlertacadastroSucesso.Text = "Timeout. Sua sessão foi expirada, favor conectar novamente.";
+            labelAlertacadastroSucesso.Text = "TIMEOUT. Conexão expirada, favor conectar novamente.";
             return;
         }
 
@@ -304,7 +304,7 @@ public partial class cadastros : System.Web.UI.Page
         else
         {
             divAlertaCadastroSucesso.Visible = true;
-            labelAlertacadastroSucesso.Text = "Timeout. Ué você está desconectado! Conecte para realizar o cadastro";
+            labelAlertacadastroSucesso.Text = "TIMEOUT. Conexão expirada, favor conectar novamente.";
             limparFormParcelas();
             return;
         }       
@@ -341,7 +341,7 @@ public partial class cadastros : System.Web.UI.Page
         else
         {
             divAlertaCadastroSucesso.Visible = true;
-            labelAlertacadastroSucesso.Text = "Timeout. Sua sessão foi expirada, favor conectar novamente.";
+            labelAlertacadastroSucesso.Text = "TIMEOUT. Conexão expirada, favor conectar novamente.";
             return;
         }
     }

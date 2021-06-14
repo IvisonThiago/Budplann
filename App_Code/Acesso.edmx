@@ -30,6 +30,7 @@
           <Property Name="ds_competencia" Type="varchar" MaxLength="30" />
           <Property Name="cd_segmento" Type="int" />
           <Property Name="cd_user" Type="int" Nullable="false" />
+          <Property Name="ds_valor" Type="money" />
         </EntityType>
         <EntityType Name="tb_parcelas">
           <Key>
@@ -81,7 +82,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="fk_lanca_desp_parcela">
+        <Association Name="fk_lanca_desp_parcelas">
           <End Role="tb_parcelas" Type="Self.tb_parcelas" Multiplicity="0..1" />
           <End Role="tb_lancamento_despesas" Type="Self.tb_lancamento_despesas" Multiplicity="*" />
           <ReferentialConstraint>
@@ -155,7 +156,7 @@
             <End Role="tb_cartao" EntitySet="tb_cartao" />
             <End Role="tb_lancamento_despesas" EntitySet="tb_lancamento_despesas" />
           </AssociationSet>
-          <AssociationSet Name="fk_lanca_desp_parcela" Association="Self.fk_lanca_desp_parcela">
+          <AssociationSet Name="fk_lanca_desp_parcelas" Association="Self.fk_lanca_desp_parcelas">
             <End Role="tb_parcelas" EntitySet="tb_parcelas" />
             <End Role="tb_lancamento_despesas" EntitySet="tb_lancamento_despesas" />
           </AssociationSet>
@@ -316,6 +317,7 @@
           <NavigationProperty Name="tb_parcelas" Relationship="BudplannModel.fk_lanca_desp_parcela" FromRole="tb_lancamento_despesas" ToRole="tb_parcelas" />
           <NavigationProperty Name="tb_segmento" Relationship="BudplannModel.fk_lanca_desp_segmento" FromRole="tb_lancamento_despesas" ToRole="tb_segmento" />
           <NavigationProperty Name="tb_usuario" Relationship="BudplannModel.fk_lanca_desp_user" FromRole="tb_lancamento_despesas" ToRole="tb_usuario" />
+          <Property Name="ds_valor" Type="Decimal" Precision="19" Scale="4" />
         </EntityType>
         <Association Name="fk_lanca_desp_cartao">
           <End Type="BudplannModel.tb_cartao" Role="tb_cartao" Multiplicity="0..1" />
@@ -414,6 +416,7 @@
           <EntitySetMapping Name="tb_lancamento_despesas">
             <EntityTypeMapping TypeName="BudplannModel.tb_lancamento_despesas">
               <MappingFragment StoreEntitySet="tb_lancamento_despesas">
+                <ScalarProperty Name="ds_valor" ColumnName="ds_valor" />
                 <ScalarProperty Name="cd_user" ColumnName="cd_user" />
                 <ScalarProperty Name="cd_segmento" ColumnName="cd_segmento" />
                 <ScalarProperty Name="ds_competencia" ColumnName="ds_competencia" />

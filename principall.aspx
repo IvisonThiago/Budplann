@@ -64,7 +64,7 @@
                         <div class="footer">
                             <p>
                                 Copyright &copy;<script>document.write(new Date().getFullYear());</script>
-                                All rights reserved | BudPlann Finanças <i class="icon-heart" aria-hidden="true"></i>by <a href="https://colorlib.com" target="_blank">@IvisonThiago</a>
+                                All rights reserved | BudPlann Gerenciamento Financeiro <i class="icon-heart" aria-hidden="true"></i>by <a href="https://colorlib.com" target="_blank">@IvisonThiago</a>
                             </p>
                         </div>
 

@@ -2,9 +2,9 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br">
 <head runat="server">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="language" content="pt-br" />
 
     <!-- CSS -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" />
@@ -49,7 +49,7 @@
                 </div>
                 <!-- Fim da barraStatus -->--%>
                 <!-- Alertas -->
-                <div runat="server" id="divAlerta" class="alert alert-warning alert-dismissible" role="alert">
+                <div runat="server" id="divAlerta" class="alert alert-danger alert-dismissible" role="alert">
                     <asp:Label runat="server" ID="labelAlerta"></asp:Label>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -77,7 +77,7 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
                                             <label for="txtDespesa">Despesa</label>
-                                            <asp:TextBox runat="server" CssClass="form-control" ID="txtDespesa" placeholder="Descrição da Despesa"></asp:TextBox>
+                                            <asp:TextBox runat="server" CssClass="form-control" ID="txtDespesa" placeholder="Descrição da Despesa" ToolTip="Informe a despesas que deseja lançar"></asp:TextBox>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label for="txtOrigemDespesa">Origem</label>
@@ -135,9 +135,13 @@
                                                 <asp:ListItem Value="12" Text="Dezembro"></asp:ListItem>
                                             </asp:DropDownList>
                                         </div>
-                                        <div class="form-group col-md-6">
+                                        <div class="form-group col-md-4">
                                             <label for="ddlSegmento">Segmento</label>
                                             <asp:DropDownList runat="server" ID="ddlSegmento" CssClass="form-control"></asp:DropDownList>
+                                        </div>
+                                        <div class="form-group col-md-2">
+                                            <label for="txtValor">Valor</label>
+                                            <asp:TextBox runat="server" ID="txtValor" CssClass="form-control"></asp:TextBox>
                                         </div>
                                     </div>
 
@@ -258,25 +262,26 @@
             <!--Fim do GridView Despesas -->--%>
 
             <!--Inicio do GridViwe Despesas -->
-            <div runat="server" class="card" id="divGridDespesas">
+            <div runat="server" class="card" id="divGridDespesas" style="overflow-y: scroll; height: 270px">
                 <div class="card-body">
-                    <asp:GridView ID="grvDespesas" runat="server" AutoGenerateColumns="False" CssClass="table table-light table-hover" AllowPaging="True" OnPageIndexChanging="grvDespesas_PageIndexChanging" OnRowDeleting="grvDespesas_RowDeleting">
+                    <asp:GridView ID="grvDespesas" runat="server" AutoGenerateColumns="False" CssClass="table table-light table-hover" AllowPaging="false" OnPageIndexChanging="grvDespesas_PageIndexChanging" OnRowDeleting="grvDespesas_RowDeleting">
                         <Columns>
                             <asp:BoundField DataField="cd_lancamento_despesa" HeaderText="Cod">
                                 <ItemStyle HorizontalAlign="Center" />
                             </asp:BoundField>
                             <asp:BoundField DataField="nm_lancamento_despesa" HeaderText="Despesa" />
                             <asp:BoundField DataField="ds_origem_despesa" HeaderText="Origem" />
-                            <asp:BoundField DataField="ds_forma_pagamento" HeaderText="F. Pagamento" />
-                            <asp:BoundField DataField="tb_cartao.nm_cartao" HeaderText="Cartão">
+                            <asp:BoundField DataField="ds_forma_pagamento" HeaderText="F. Pgto" />
+                            <asp:BoundField DataField="tb_cartao.nm_cartao" HeaderText="CARTAO">
                                 <HeaderStyle HorizontalAlign="Center" />
                             </asp:BoundField>
                             <asp:BoundField DataField="tb_parcelas.nr_parcelas" HeaderText="Parcela">
                                 <ItemStyle HorizontalAlign="Center" />
                             </asp:BoundField>
-                            <asp:BoundField DataField="dt_compra" HeaderText="Data Compra" DataFormatString="{0:dd/MM/yyyy}" />
-                            <asp:BoundField DataField="ds_competencia" HeaderText="Competência" />
+                            <asp:BoundField DataField="dt_compra" HeaderText="Dt Compra" DataFormatString="{0:dd/MM/yyyy}" />
+                            <asp:BoundField DataField="ds_competencia" HeaderText="Comp" />
                             <asp:BoundField DataField="tb_segmento.nm_segmento" HeaderText="Segmento" />
+                            <asp:BoundField DataField="ds_valor" HeaderText="Valor" DataFormatString="{0:N2}" />
                             <asp:CommandField DeleteText="Deletar" HeaderText="Excluir" ShowDeleteButton="True" ButtonType="Image" DeleteImageUrl="~/img/delete.png">
                                 <ItemStyle HorizontalAlign="Center" />
                             </asp:CommandField>
@@ -284,12 +289,18 @@
                                 <ItemStyle HorizontalAlign="Center" />
                             </asp:HyperLinkField>
                         </Columns>
-                        <PagerSettings PageButtonCount="5" />
+
                     </asp:GridView>
+                    <div class="form-group col-md-4">
+                        <asp:Button runat="server" ID="btnFecharDespesas" Text="Fechar" CssClass="btn btn-primary btn-sm" OnClick="btnFecharDespesas_Click" />
+                        <asp:Button runat="server" ID="btnCalcular" Text="Somar" CssClass="btn btn-primary btn-sm" OnClick="btnCalcular_Click" />
+                        <asp:Button runat="server" ID="btnImprimir" Text="Imprimir" CssClass="btn btn-primary btn-sm" OnClick="btnImprimir_Click" />
+                    </div>
+                    <div runat="server" id="divValorSomado" class="form-group col-md-2">
+                        <asp:TextBox runat="server" ID="txtSomaValor" CssClass="form-control"></asp:TextBox>
+                    </div>
                 </div>
-                <div class="form-group col-md-6">
-                    <asp:Button runat="server" ID="btnFecharDespesas" Text="Fechar" CssClass="btn btn-primary btn-sm" OnClick="btnFecharDespesas_Click" />
-                </div>
+
             </div>
             <!--Fim do GridView Despesas -->
 
@@ -304,6 +315,8 @@
     <script src="Bootstrap/js/bootstrap.min.js"></script>
     <script src="js/jquery.sticky.js"></script>
     <script src="js/main.js"></script>
+    <script src="Scripts/jquery.maskedinput.min.js"></script>
+    <script src="Scripts/jquery.moneymask.js"></script>
     <!-- js para o auto close do alerta -->
     <script type="text/javascript">
         $(document).ready(function () {
@@ -313,6 +326,23 @@
         })
     </script>
     <!-- Fim auto close -->
-
+    <!-- Mascaras dos campos -->
+    <script>
+        $(function () {
+            $("#txtValor").maskMoney({ prefix: 'R$ ', allowNegative: true, thousands: '.', decimal: ',', affixesStay: false });
+        });
+    </script>
+    <!-- Fim Mascaras dos campos -->
+    <!-- remove acentuação -->
+    <script>
+        $(function () {
+            $("#txtDespesa, #txtOrigemDespesa").keyup(function () {
+                var texto = removerAcentos($(this).val());
+                $(this).val(texto);
+            });
+        });
+        function removerAcentos(s) { return s.normalize('NFD').replace(/[\u0300-\u036f|\u00b4|\u0060|\u005e|\u007e]/g, "") }
+    </script>
+    <!-- fim remove acentuação -->
 </body>
 </html>

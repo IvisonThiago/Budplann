@@ -57,7 +57,7 @@ public partial class _Default : System.Web.UI.Page
                 var existeUser = conexao.tb_usuario.Single(x => x.nm_user == user);
                 if (existeUser.nm_user != null && existeUser.nr_senha == senha)
                 {
-                    var authTicket = new FormsAuthenticationTicket(user, false, 90);
+                    var authTicket = new FormsAuthenticationTicket(user, false, 20);
                     var encripTicket = FormsAuthentication.Encrypt(authTicket);
                     var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encripTicket);
                     Response.Cookies.Add(authCookie);

@@ -6,6 +6,15 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Security;
 using System.Text;
+using System.Xml.Linq;
+using System.IO;
+using System.Data;
+using System.Reflection;
+using iTextSharp;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.text.html;
+using iTextSharp.text.html.simpleparser;
 
 
 public partial class lancamentos : System.Web.UI.Page
@@ -75,6 +84,7 @@ public partial class lancamentos : System.Web.UI.Page
         ddlParcelas.SelectedValue = "1";
         ddlCompetencia.SelectedValue = "0";
         ddlSegmento.SelectedValue = "0";
+        txtValor.Text = string.Empty;
     }
     private void limparDadosModal()
     {
@@ -92,23 +102,39 @@ public partial class lancamentos : System.Web.UI.Page
     private void carregaGridDespesasFiltro()
     {
         int codSessao = Convert.ToInt32(Session["codUser"]);
-        DateTime data1 = Convert.ToDateTime(txtPesquisa1.Value);
-        DateTime data2 = Convert.ToDateTime(txtPesquisa2.Value);
         var competencia = ddlFiltroCompetencia.SelectedItem.ToString();
 
-        using (var conexao = new BudplannEntities())
+        if (txtPesquisa1.Value != string.Empty && txtPesquisa2.Value != string.Empty)
         {
-            var listarDespesas = conexao.tb_lancamento_despesas.Where
-            (x => x.cd_user == codSessao
-            && x.dt_compra >= data1
-            && x.dt_compra <= data2
-            && x.ds_competencia == competencia).OrderByDescending(x => x.cd_lancamento_despesa).ToList();
+            DateTime data1 = Convert.ToDateTime(txtPesquisa1.Value);
+            DateTime data2 = Convert.ToDateTime(txtPesquisa2.Value);
 
-            grvDespesas.DataSource = listarDespesas;
-            grvDespesas.DataBind();
+            using (var conexao = new BudplannEntities())
+            {
+                var listarDespesas = conexao.tb_lancamento_despesas.Where
+                (x => x.cd_user == codSessao
+                && x.dt_compra >= data1
+                && x.dt_compra <= data2
+                && x.ds_competencia == competencia).OrderByDescending(x => x.cd_lancamento_despesa).ToList();
+
+                grvDespesas.DataSource = listarDespesas;
+                grvDespesas.DataBind();
+            }
+        }
+        else
+        {
+            using (var conexao = new BudplannEntities())
+            {
+                var listarDespesas = conexao.tb_lancamento_despesas.Where
+                (x => x.cd_user == codSessao
+                && x.ds_competencia == competencia).OrderByDescending(x => x.cd_lancamento_despesa).ToList();
+
+                grvDespesas.DataSource = listarDespesas;
+                grvDespesas.DataBind();
+            }
         }
     }
-    private void carregaDepesaSalva()
+     private void carregaDepesaSalva()
     {
         int codSessao = Convert.ToInt32(Session["codUser"]);
         using (var conexao = new BudplannEntities())
@@ -125,6 +151,7 @@ public partial class lancamentos : System.Web.UI.Page
     #region Page Load
     protected void Page_Load(object sender, EventArgs e)
     {
+
         //-----habilita o dropdownlist através do radio button-----------------
         if (rdCartao.Checked)
         {
@@ -147,6 +174,7 @@ public partial class lancamentos : System.Web.UI.Page
             //-----atribuições de visualização html--------------------
             divAlerta.Visible = false;
             divGridDespesas.Visible = false;
+            divValorSomado.Visible = false;
             //---------------------------------------------------------
 
             //-----barra superior de status----------------------------
@@ -179,6 +207,8 @@ public partial class lancamentos : System.Web.UI.Page
     }
     protected void btnLimpar_Click(object sender, ImageClickEventArgs e)
     {
+        divAlerta.Visible = false;
+        divGridDespesas.Visible = false;
         limparFormLancamentoDespesa();
     }
     protected void btnSalvar_Click(object sender, ImageClickEventArgs e)
@@ -243,12 +273,22 @@ public partial class lancamentos : System.Web.UI.Page
                 {
                     addLancamentoDespesas.cd_segmento = Convert.ToInt32(ddlSegmento.SelectedValue);
                 }
+                if (txtValor.Text != string.Empty)
+                {
+                    addLancamentoDespesas.ds_valor = Convert.ToDecimal(txtValor.Text);
+                }
+                else
+                {
+                    divAlerta.Visible = true;
+                    labelAlerta.Text = "O seu manezão. Como tu quer lançar uma despesa sem informar um VALOR?";
+                    return;
+                }
 
                 conexao.tb_lancamento_despesas.Add(addLancamentoDespesas);
                 conexao.SaveChanges();
             }
             divAlerta.Visible = true;
-            labelAlerta.Text = "Ae fica sussa que seu lançamento foi registrado.";
+            labelAlerta.Text = "Ai sim... Lançamento de despesa realizado com sucesso!";
             limparFormLancamentoDespesa();
             divGridDespesas.Visible = true;
             carregaDepesaSalva();
@@ -256,14 +296,14 @@ public partial class lancamentos : System.Web.UI.Page
         else
         {
             divAlerta.Visible = true;
-            labelAlerta.Text = "Timeout. Sem chance você foi desconectado! Conecte novamente para realizar o cadastro";
+            labelAlerta.Text = "TIMEOUT. Conexão expirada, favor conectar novamente.";
             limparFormLancamentoDespesa();
             return;
         }
     }
     protected void grvDespesas_RowDeleting(object sender, GridViewDeleteEventArgs e)
     {
-        var codLancamento = Convert.ToInt32(e.Values["codLancamento"]);
+        var codLancamento = Convert.ToInt32(e.Values["cd_lancamento_despesa"]);
         using (var conexao = new BudplannEntities())
         {
             var excluirDespesa = conexao.tb_lancamento_despesas.Single(x => x.cd_lancamento_despesa == codLancamento);
@@ -286,33 +326,158 @@ public partial class lancamentos : System.Web.UI.Page
     #endregion
     protected void btnRealizarPesquisa_Click(object sender, EventArgs e)
     {
-        if (txtPesquisa1.Value != string.Empty && txtPesquisa2.Value != string.Empty)
-        {
-            if (ddlFiltroCompetencia.SelectedValue != "0")
-            {
-                divAlerta.Visible = false;
-                divGridDespesas.Visible = true;
-                carregaGridDespesasFiltro();
+        var codSessao = Session["codUser"];
 
+        if (codSessao != null)
+        {
+            if (txtPesquisa1.Value != string.Empty && txtPesquisa2.Value != string.Empty)
+            {
+                    divValorSomado.Visible = false;
+                    divAlerta.Visible = false;
+                    divGridDespesas.Visible = true;
+                    carregaGridDespesasFiltro();
             }
             else
             {
-                divAlerta.Visible = true;
-                labelAlerta.Text = "Ohh Manezão. Para efetivar a pesquisa informe uma competência.";
-                return;
+                if (ddlFiltroCompetencia.SelectedValue != "0")
+                {
+                    carregaGridDespesasFiltro();
+                    divValorSomado.Visible = false;
+                    divAlerta.Visible = false;
+                    divGridDespesas.Visible = true; 
+                }
+                else
+                {
+                    divAlerta.Visible = true;
+                    labelAlerta.Text = "Manezão. Para pesquisar, tem que informar a competência.";
+                    return;
+                }
             }
         }
         else
         {
             divAlerta.Visible = true;
-            labelAlerta.Text = "Ohh Manezão. Para efetivar a pesquisa é necessário informar uma data inicial e final!";
+            labelAlerta.Text = "TIMEOUT. Conexão expirada, favor conectar novamente.";
             return;
-        }
+        }      
     }
     protected void btnFecharModal_Click(object sender, EventArgs e)
     {
         limparDadosModal();
         divAlerta.Visible = false;
     }
+    protected void btnCalcular_Click(object sender, EventArgs e)
+    {
+        divValorSomado.Visible = true;
+        //---Codigo para calcular o valor de um campo dentro do gridview--------------------------------------
+        decimal valorTotal = 0;
+        foreach (GridViewRow row in grvDespesas.Rows)
+        {
+            if (row.RowType != DataControlRowType.Header && row.RowType != DataControlRowType.Footer)
+            {
+                if (row.Cells[9].Text != null && row.Cells[9].Text != string.Empty)
+                {
+                    valorTotal += Convert.ToDecimal(row.Cells[9].Text);
+                }
+            }
+        }
+        txtSomaValor.Text = valorTotal.ToString("C2");
+        //----------------------------------------------------------------------------------------------------
+        txtSomaValor.Enabled = false;
+        btnFecharDespesas.Focus();
+    }
+    protected void btnImprimir_Click(object sender, EventArgs e)
+    {
+        //Document doc = new Document(PageSize.A4);
+        //doc.SetMargins(40, 40, 40, 80);
+        //doc.AddCreationDate();
+        //string caminho = AppDomain.CurrentDomain.BaseDirectory + @"\pdf\" + "relatorio.pdf";
+
+        //PdfWriter writer = PdfWriter.GetInstance(doc, new FileStream(caminho, FileMode.Create));
+
+        //doc.Open();
+
+        //Paragraph titulo = new Paragraph();
+        //titulo.Font = new Font(Font.FontFamily.COURIER, 40);
+        //titulo.Alignment = Element.ALIGN_CENTER;
+        //titulo.Add("Relatório de Despesas\n\n");
+        //doc.Add(titulo);
+
+        //Paragraph paragrafo = new Paragraph("", new Font(Font.NORMAL, 12));
+        //string conteudo = "Texto aqui.\n\n";
+        //paragrafo.Add(conteudo);
+        //doc.Add(paragrafo);
+
+        //doc.Close();
+        //System.Diagnostics.Process.Start(caminho);
+
+        txtValor.Enabled = true;
+        divValorSomado.Visible = true;
+
+        Document pdfDocumento = new Document(PageSize.A4, 1f, 0, 20f, 10f);
+        pdfDocumento.SetMargins(10, 10, 20, 20);
+        PdfWriter.GetInstance(pdfDocumento, Response.OutputStream);
+
+        PdfPTable pdfTable = new PdfPTable(grvDespesas.HeaderRow.Cells.Count);
+        //--Para definir o tamanho da tabela em porcetage ------------------------------------
+        pdfTable.WidthPercentage = 95F;
+        //------------------------------------------------------------------------------------
+        pdfTable.DefaultCell.Border = Rectangle.NO_BORDER;
+        iTextSharp.text.Font fontTableRow = FontFactory.GetFont("myspecial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLUE);
+        //---Para definir os tamanhos de cada célula da tabela -------------------------------
+        float[] widths = new float[] { 0f, 9f, 8f, 3f, 0f, 3f, 4f, 3f, 0f, 3f, 0f, 0f };
+        pdfTable.SetWidths(widths);
+        //------------------------------------------------------------------------------------
+
+        foreach (TableCell headerCell in grvDespesas.HeaderRow.Cells)
+        {
+            PdfPCell pdfCell = new PdfPCell(new Phrase(headerCell.Text));
+            pdfCell.HorizontalAlignment = Element.ALIGN_CENTER;
+            pdfTable.AddCell(pdfCell);
+        }
+
+        foreach (GridViewRow gridViewRow in grvDespesas.Rows)
+        {
+            foreach (TableCell tableCell in gridViewRow.Cells)
+            {
+                PdfPCell pdfCell = new PdfPCell(new Phrase(tableCell.Text.Replace("&nbsp;", ""), fontTableRow));
+                pdfTable.AddCell(pdfCell); ;
+            }
+
+        }
+
+        Paragraph titulo = new Paragraph();
+        titulo.Font = new Font(Font.FontFamily.COURIER, 20);
+        titulo.Alignment = Element.ALIGN_CENTER;
+        titulo.Add("Relatório de Despesas\n\n");
+
+        Paragraph valor = new Paragraph();
+        valor.Font = new Font(Font.FontFamily.COURIER, 16);
+        var valorTotal = txtSomaValor.Text;
+        valor.Add("\nValor Total:" + " " + valorTotal + "\n\n");
+        valor.Alignment = Element.ALIGN_RIGHT;
+    
+        pdfDocumento.Open();
+        pdfDocumento.Add(titulo);
+        pdfDocumento.Add(pdfTable);
+        pdfDocumento.Add(valor);
+        pdfDocumento.Close();
+
+        string attachment = "attachment; filename=RelatorioDespesas.pdf";
+        Response.AddHeader("content-disposition", attachment);
+        Response.AppendHeader("content-diposition", "attachment;filename=Employess.pdf");
+        Response.ContentType = "application/pdf";
+        Response.Write(pdfDocumento);
+        Response.Flush();
+        Response.End();
+
+
+    }
+
+    //public override void VerifyRenderingInServerForm(Control control)
+    //{
+    //    return;
+    //}
+
 
 }

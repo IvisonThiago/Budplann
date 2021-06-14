@@ -40,6 +40,7 @@ public partial class tb_lancamento_despesas
     public string ds_competencia { get; set; }
     public Nullable<int> cd_segmento { get; set; }
     public int cd_user { get; set; }
+    public Nullable<decimal> ds_valor { get; set; }
 
     public virtual tb_cartao tb_cartao { get; set; }
     public virtual tb_parcelas tb_parcelas { get; set; }
