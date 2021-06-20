@@ -10,6 +10,15 @@
 using System;
 using System.Collections.Generic;
 
+public partial class sysdiagrams
+{
+    public string name { get; set; }
+    public int principal_id { get; set; }
+    public int diagram_id { get; set; }
+    public Nullable<int> version { get; set; }
+    public byte[] definition { get; set; }
+}
+
 public partial class tb_cartao
 {
     public tb_cartao()
@@ -22,9 +31,16 @@ public partial class tb_cartao
     public Nullable<System.DateTime> dt_validade { get; set; }
     public string ds_tipo { get; set; }
     public int cd_user { get; set; }
+    public string ds_inativo { get; set; }
 
     public virtual tb_usuario tb_usuario { get; set; }
     public virtual ICollection<tb_lancamento_despesas> tb_lancamento_despesas { get; set; }
+}
+
+public partial class tb_competencia
+{
+    public int cd_competencia { get; set; }
+    public Nullable<System.DateTime> dt_competencia { get; set; }
 }
 
 public partial class tb_lancamento_despesas
@@ -43,8 +59,21 @@ public partial class tb_lancamento_despesas
     public Nullable<decimal> ds_valor { get; set; }
 
     public virtual tb_cartao tb_cartao { get; set; }
-    public virtual tb_parcelas tb_parcelas { get; set; }
     public virtual tb_segmento tb_segmento { get; set; }
+    public virtual tb_usuario tb_usuario { get; set; }
+    public virtual tb_parcelas tb_parcelas { get; set; }
+}
+
+public partial class tb_lancamento_receitas
+{
+    public int cd_lancamento_receita { get; set; }
+    public string ds_origem_receita { get; set; }
+    public Nullable<System.DateTime> dt_recebimento { get; set; }
+    public string ds_competencia { get; set; }
+    public decimal ds_valor { get; set; }
+    public int cd_user { get; set; }
+    public string ds_receita { get; set; }
+
     public virtual tb_usuario tb_usuario { get; set; }
 }
 
@@ -58,9 +87,10 @@ public partial class tb_parcelas
     public int cd_parcela { get; set; }
     public int nr_parcelas { get; set; }
     public int cd_user { get; set; }
+    public string ds_inativo { get; set; }
 
-    public virtual tb_usuario tb_usuario { get; set; }
     public virtual ICollection<tb_lancamento_despesas> tb_lancamento_despesas { get; set; }
+    public virtual tb_usuario tb_usuario { get; set; }
 }
 
 public partial class tb_segmento
@@ -73,6 +103,8 @@ public partial class tb_segmento
     public int cd_segmento { get; set; }
     public string nm_segmento { get; set; }
     public Nullable<int> cd_user { get; set; }
+    public Nullable<bool> ds_ativo { get; set; }
+    public string ds_inativo { get; set; }
 
     public virtual tb_usuario tb_usuario { get; set; }
     public virtual ICollection<tb_lancamento_despesas> tb_lancamento_despesas { get; set; }
@@ -84,8 +116,9 @@ public partial class tb_usuario
     {
         this.tb_cartao = new HashSet<tb_cartao>();
         this.tb_segmento = new HashSet<tb_segmento>();
-        this.tb_parcelas = new HashSet<tb_parcelas>();
         this.tb_lancamento_despesas = new HashSet<tb_lancamento_despesas>();
+        this.tb_lancamento_receitas = new HashSet<tb_lancamento_receitas>();
+        this.tb_parcelas = new HashSet<tb_parcelas>();
     }
 
     public int cd_user { get; set; }
@@ -96,6 +129,7 @@ public partial class tb_usuario
 
     public virtual ICollection<tb_cartao> tb_cartao { get; set; }
     public virtual ICollection<tb_segmento> tb_segmento { get; set; }
-    public virtual ICollection<tb_parcelas> tb_parcelas { get; set; }
     public virtual ICollection<tb_lancamento_despesas> tb_lancamento_despesas { get; set; }
+    public virtual ICollection<tb_lancamento_receitas> tb_lancamento_receitas { get; set; }
+    public virtual ICollection<tb_parcelas> tb_parcelas { get; set; }
 }

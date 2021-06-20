@@ -30,7 +30,7 @@ public partial class lancamentos : System.Web.UI.Page
         {
             //-----Carrega o dropdownlist de acordo com o usuário logado------------------------------------  
             //var listarTbCartao = conexao.tb_cartao.ToList();
-            var listarTbCartao = conexao.tb_cartao.Where(x => x.cd_user == codSessao).ToList();
+            var listarTbCartao = conexao.tb_cartao.Where(x => x.cd_user == codSessao && x.ds_inativo == "N").ToList();
 
             ddlCartao.DataSource = listarTbCartao;
             listarTbCartao.Insert(0, new tb_cartao { cd_cartao = 0, nm_cartao = "[Selecione]" });
@@ -46,7 +46,7 @@ public partial class lancamentos : System.Web.UI.Page
 
         using (var conexao = new BudplannEntities())
         {
-            var listarTbParcelas = conexao.tb_parcelas.Where(x => x.cd_user == codSessao).ToList();
+            var listarTbParcelas = conexao.tb_parcelas.Where(x => x.cd_user == codSessao && x.ds_inativo == "N").ToList();
 
             ddlParcelas.DataSource = listarTbParcelas;
             ddlParcelas.DataValueField = "cd_parcela";
@@ -60,7 +60,7 @@ public partial class lancamentos : System.Web.UI.Page
 
         using (var conexao = new BudplannEntities())
         {
-            var listarTbSegmento = conexao.tb_segmento.Where(x => x.cd_user == codSessao).ToList();
+            var listarTbSegmento = conexao.tb_segmento.Where(x => x.cd_user == codSessao && x.ds_inativo == "N").ToList();
 
             ddlSegmento.DataSource = listarTbSegmento;
             listarTbSegmento.Insert(0, new tb_segmento { cd_segmento = 0, nm_segmento = "[Selecione]" });
@@ -151,10 +151,12 @@ public partial class lancamentos : System.Web.UI.Page
     #region Page Load
     protected void Page_Load(object sender, EventArgs e)
     {
+        string anoAtual = DateTime.Now.ToString("yyyy");
 
         //-----habilita o dropdownlist através do radio button-----------------
         if (rdCartao.Checked)
         {
+            divAlerta.Visible = false;
             ddlCartao.Enabled = true;
             ddlParcelas.Enabled = true;
         }
@@ -175,6 +177,7 @@ public partial class lancamentos : System.Web.UI.Page
             divAlerta.Visible = false;
             divGridDespesas.Visible = false;
             divValorSomado.Visible = false;
+            txtDataAno.Text = anoAtual;
             //---------------------------------------------------------
 
             //-----barra superior de status----------------------------
@@ -221,34 +224,32 @@ public partial class lancamentos : System.Web.UI.Page
             {
                 var addLancamentoDespesas = new tb_lancamento_despesas();
                 addLancamentoDespesas.cd_user = Convert.ToInt32(codUsuario);
-                addLancamentoDespesas.nm_lancamento_despesa = txtDespesa.Text;
+
+                if (txtDespesa.Text == string.Empty)
+                {
+                    divAlerta.Visible = true;
+                    labelAlerta.Text = "O seu manezão. Precisa informar a descrição da despesa.";
+                    return;
+                }
+                else
+                {
+                    addLancamentoDespesas.nm_lancamento_despesa = txtDespesa.Text;
+                }
                 addLancamentoDespesas.ds_origem_despesa = txtOrigemDespesa.Text;
                 addLancamentoDespesas.ds_nota_fiscal = txtNotaFical.Text;
                 if (rdCartao.Checked)
                 {
                     addLancamentoDespesas.cd_cartao = Convert.ToInt32(ddlCartao.SelectedValue);
+                    addLancamentoDespesas.cd_parcela = Convert.ToInt32(ddlParcelas.SelectedValue);
+                    addLancamentoDespesas.ds_forma_pagamento = "CARTAO";
                 }
                 else
                 {
                     addLancamentoDespesas.cd_cartao = null;
-                }
-                if (rdCartao.Checked)
-                {
-                    addLancamentoDespesas.cd_parcela = Convert.ToInt32(ddlParcelas.SelectedValue);
-                }
-                else
-                {
                     addLancamentoDespesas.cd_parcela = null;
+                    addLancamentoDespesas.ds_forma_pagamento = "DINHEIRO";
                 }
 
-                if (rdCartao.Checked)
-                {
-                    addLancamentoDespesas.ds_forma_pagamento = "Cartão";
-                }
-                else
-                {
-                    addLancamentoDespesas.ds_forma_pagamento = "Dinheiro";
-                }
                 if (dtLancamento.Value == string.Empty)
                 {
                     addLancamentoDespesas.dt_compra = null;
@@ -288,7 +289,7 @@ public partial class lancamentos : System.Web.UI.Page
                 conexao.SaveChanges();
             }
             divAlerta.Visible = true;
-            labelAlerta.Text = "Ai sim... Lançamento de despesa realizado com sucesso!";
+            labelAlerta.Text = "Despesa lançada com sucesso!";
             limparFormLancamentoDespesa();
             divGridDespesas.Visible = true;
             carregaDepesaSalva();
@@ -381,13 +382,84 @@ public partial class lancamentos : System.Web.UI.Page
                 }
             }
         }
-        txtSomaValor.Text = valorTotal.ToString("C2");
+        lblSomaValor.Text = "Valor Total: " + valorTotal.ToString("C2");
         //----------------------------------------------------------------------------------------------------
-        txtSomaValor.Enabled = false;
+        lblSomaValor.Enabled = false;
         btnFecharDespesas.Focus();
     }
     protected void btnImprimir_Click(object sender, EventArgs e)
     {
+        int rowCount = grvDespesas.Rows.Count;
+
+        if (rowCount != 0)
+        {
+            txtValor.Enabled = true;
+            divValorSomado.Visible = true;
+
+            Document pdfDocumento = new Document(PageSize.A4, 1f, 0, 20f, 10f);
+            pdfDocumento.SetMargins(10, 10, 20, 20);
+            PdfWriter.GetInstance(pdfDocumento, Response.OutputStream);
+
+            PdfPTable pdfTable = new PdfPTable(grvDespesas.HeaderRow.Cells.Count);
+            //--Para definir o tamanho da tabela em porcentage ------------------------------------
+            pdfTable.WidthPercentage = 95F;
+            //-------------------------------------------------------------------------------------
+            pdfTable.DefaultCell.Border = Rectangle.NO_BORDER;
+            iTextSharp.text.Font fontTableRow = FontFactory.GetFont("myspecial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLUE);
+            //---Para definir os tamanhos de cada célula da tabela -------------------------------
+            float[] widths = new float[] { 0f, 9f, 8f, 3f, 0f, 3f, 4f, 3f, 0f, 3f, 0f, 0f };
+            pdfTable.SetWidths(widths);
+            //------------------------------------------------------------------------------------
+
+            foreach (TableCell headerCell in grvDespesas.HeaderRow.Cells)
+            {
+                PdfPCell pdfCell = new PdfPCell(new Phrase(headerCell.Text));
+                pdfCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                pdfTable.AddCell(pdfCell);
+            }
+
+            foreach (GridViewRow gridViewRow in grvDespesas.Rows)
+            {
+                foreach (TableCell tableCell in gridViewRow.Cells)
+                {
+                    PdfPCell pdfCell = new PdfPCell(new Phrase(tableCell.Text.Replace("&nbsp;", ""), fontTableRow));
+                    pdfTable.AddCell(pdfCell); ;
+                }
+            }
+
+            Paragraph titulo = new Paragraph();
+            titulo.Font = new Font(Font.FontFamily.COURIER, 20);
+            titulo.Alignment = Element.ALIGN_CENTER;
+            titulo.Add("Relatório de Despesas\n\n");
+
+            Paragraph valor = new Paragraph();
+            valor.Font = new Font(Font.FontFamily.COURIER, 16);
+            var valorTotal = lblSomaValor.Text;
+            valor.Add("\nValor Total:" + " " + valorTotal + "\n\n");
+            valor.Alignment = Element.ALIGN_RIGHT;
+
+            pdfDocumento.Open();
+            pdfDocumento.Add(titulo);
+            pdfDocumento.Add(pdfTable);
+            pdfDocumento.Add(valor);
+            pdfDocumento.Close();
+
+            string attachment = "attachment; filename=RelatorioDespesas.pdf";
+            Response.AddHeader("content-disposition", attachment);
+            Response.AppendHeader("content-diposition", "attachment;filename=Employess.pdf");
+            Response.ContentType = "application/pdf";
+            Response.Write(pdfDocumento);
+            Response.Flush();
+            Response.End();
+        }
+        else
+        {
+            labelAlerta.Text = "Não foi possível imprimir suas despesas. Motivo: Não existe lançamento para este período.";
+            divAlerta.Visible = true;
+            divGridDespesas.Visible = false;
+            return; 
+        }
+
         //Document doc = new Document(PageSize.A4);
         //doc.SetMargins(40, 40, 40, 80);
         //doc.AddCreationDate();
@@ -411,67 +483,6 @@ public partial class lancamentos : System.Web.UI.Page
         //doc.Close();
         //System.Diagnostics.Process.Start(caminho);
 
-        txtValor.Enabled = true;
-        divValorSomado.Visible = true;
-
-        Document pdfDocumento = new Document(PageSize.A4, 1f, 0, 20f, 10f);
-        pdfDocumento.SetMargins(10, 10, 20, 20);
-        PdfWriter.GetInstance(pdfDocumento, Response.OutputStream);
-
-        PdfPTable pdfTable = new PdfPTable(grvDespesas.HeaderRow.Cells.Count);
-        //--Para definir o tamanho da tabela em porcetage ------------------------------------
-        pdfTable.WidthPercentage = 95F;
-        //------------------------------------------------------------------------------------
-        pdfTable.DefaultCell.Border = Rectangle.NO_BORDER;
-        iTextSharp.text.Font fontTableRow = FontFactory.GetFont("myspecial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLUE);
-        //---Para definir os tamanhos de cada célula da tabela -------------------------------
-        float[] widths = new float[] { 0f, 9f, 8f, 3f, 0f, 3f, 4f, 3f, 0f, 3f, 0f, 0f };
-        pdfTable.SetWidths(widths);
-        //------------------------------------------------------------------------------------
-
-        foreach (TableCell headerCell in grvDespesas.HeaderRow.Cells)
-        {
-            PdfPCell pdfCell = new PdfPCell(new Phrase(headerCell.Text));
-            pdfCell.HorizontalAlignment = Element.ALIGN_CENTER;
-            pdfTable.AddCell(pdfCell);
-        }
-
-        foreach (GridViewRow gridViewRow in grvDespesas.Rows)
-        {
-            foreach (TableCell tableCell in gridViewRow.Cells)
-            {
-                PdfPCell pdfCell = new PdfPCell(new Phrase(tableCell.Text.Replace("&nbsp;", ""), fontTableRow));
-                pdfTable.AddCell(pdfCell); ;
-            }
-
-        }
-
-        Paragraph titulo = new Paragraph();
-        titulo.Font = new Font(Font.FontFamily.COURIER, 20);
-        titulo.Alignment = Element.ALIGN_CENTER;
-        titulo.Add("Relatório de Despesas\n\n");
-
-        Paragraph valor = new Paragraph();
-        valor.Font = new Font(Font.FontFamily.COURIER, 16);
-        var valorTotal = txtSomaValor.Text;
-        valor.Add("\nValor Total:" + " " + valorTotal + "\n\n");
-        valor.Alignment = Element.ALIGN_RIGHT;
-    
-        pdfDocumento.Open();
-        pdfDocumento.Add(titulo);
-        pdfDocumento.Add(pdfTable);
-        pdfDocumento.Add(valor);
-        pdfDocumento.Close();
-
-        string attachment = "attachment; filename=RelatorioDespesas.pdf";
-        Response.AddHeader("content-disposition", attachment);
-        Response.AppendHeader("content-diposition", "attachment;filename=Employess.pdf");
-        Response.ContentType = "application/pdf";
-        Response.Write(pdfDocumento);
-        Response.Flush();
-        Response.End();
-
-
     }
 
     //public override void VerifyRenderingInServerForm(Control control)
@@ -479,5 +490,9 @@ public partial class lancamentos : System.Web.UI.Page
     //    return;
     //}
 
+
+    // COLOCAR OS DROPDOW para listar por ordem
+    //CARREGAR OS GRIDS apos o cadastro
+    //auto focus nas despesas
 
 }

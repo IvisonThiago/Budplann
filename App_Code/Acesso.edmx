@@ -5,6 +5,16 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="BudplannModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
         <EntityType Name="tb_cartao">
           <Key>
             <PropertyRef Name="cd_cartao" />
@@ -14,6 +24,14 @@
           <Property Name="dt_validade" Type="date" />
           <Property Name="ds_tipo" Type="varchar" MaxLength="50" />
           <Property Name="cd_user" Type="int" Nullable="false" />
+          <Property Name="ds_inativo" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="tb_competencia">
+          <Key>
+            <PropertyRef Name="cd_competencia" />
+          </Key>
+          <Property Name="cd_competencia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="dt_competencia" Type="date" />
         </EntityType>
         <EntityType Name="tb_lancamento_despesas">
           <Key>
@@ -32,6 +50,18 @@
           <Property Name="cd_user" Type="int" Nullable="false" />
           <Property Name="ds_valor" Type="money" />
         </EntityType>
+        <EntityType Name="tb_lancamento_receitas">
+          <Key>
+            <PropertyRef Name="cd_lancamento_receita" />
+          </Key>
+          <Property Name="cd_lancamento_receita" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ds_origem_receita" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="dt_recebimento" Type="date" />
+          <Property Name="ds_competencia" Type="varchar" MaxLength="30" />
+          <Property Name="ds_valor" Type="money" Nullable="false" />
+          <Property Name="cd_user" Type="int" Nullable="false" />
+          <Property Name="ds_receita" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="tb_parcelas">
           <Key>
             <PropertyRef Name="cd_parcela" />
@@ -39,6 +69,7 @@
           <Property Name="cd_parcela" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="nr_parcelas" Type="int" Nullable="false" />
           <Property Name="cd_user" Type="int" Nullable="false" />
+          <Property Name="ds_inativo" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="tb_segmento">
           <Key>
@@ -47,6 +78,8 @@
           <Property Name="cd_segmento" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="nm_segmento" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="cd_user" Type="int" />
+          <Property Name="ds_ativo" Type="bit" />
+          <Property Name="ds_inativo" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="tb_usuario">
           <Key>
@@ -118,6 +151,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_lanca_receit_user">
+          <End Role="tb_usuario" Type="Self.tb_usuario" Multiplicity="1" />
+          <End Role="tb_lancamento_receitas" Type="Self.tb_lancamento_receitas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tb_usuario">
+              <PropertyRef Name="cd_user" />
+            </Principal>
+            <Dependent Role="tb_lancamento_receitas">
+              <PropertyRef Name="cd_user" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_parcelas">
           <End Role="tb_usuario" Type="Self.tb_usuario" Multiplicity="1" />
           <End Role="tb_parcelas" Type="Self.tb_parcelas" Multiplicity="*" />
@@ -143,8 +188,11 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="BudplannModelStoreContainer">
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_cartao" EntityType="Self.tb_cartao" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tb_competencia" EntityType="Self.tb_competencia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_lancamento_despesas" EntityType="Self.tb_lancamento_despesas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tb_lancamento_receitas" EntityType="Self.tb_lancamento_receitas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_parcelas" EntityType="Self.tb_parcelas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_segmento" EntityType="Self.tb_segmento" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_usuario" EntityType="Self.tb_usuario" Schema="dbo" store:Type="Tables" />
@@ -167,6 +215,10 @@
           <AssociationSet Name="fk_lanca_desp_user" Association="Self.fk_lanca_desp_user">
             <End Role="tb_usuario" EntitySet="tb_usuario" />
             <End Role="tb_lancamento_despesas" EntitySet="tb_lancamento_despesas" />
+          </AssociationSet>
+          <AssociationSet Name="fk_lanca_receit_user" Association="Self.fk_lanca_receit_user">
+            <End Role="tb_usuario" EntitySet="tb_usuario" />
+            <End Role="tb_lancamento_receitas" EntitySet="tb_lancamento_receitas" />
           </AssociationSet>
           <AssociationSet Name="fk_parcelas" Association="Self.fk_parcelas">
             <End Role="tb_usuario" EntitySet="tb_usuario" />
@@ -193,18 +245,9 @@
             <End Role="tb_usuario" EntitySet="tb_usuario" />
             <End Role="tb_segmento" EntitySet="tb_segmento" />
           </AssociationSet>
-          <EntitySet Name="tb_parcelas" EntityType="BudplannModel.tb_parcelas" />
-          <AssociationSet Name="fk_parcelas" Association="BudplannModel.fk_parcelas">
-            <End Role="tb_usuario" EntitySet="tb_usuario" />
-            <End Role="tb_parcelas" EntitySet="tb_parcelas" />
-          </AssociationSet>
           <EntitySet Name="tb_lancamento_despesas" EntityType="BudplannModel.tb_lancamento_despesas" />
           <AssociationSet Name="fk_lanca_desp_cartao" Association="BudplannModel.fk_lanca_desp_cartao">
             <End Role="tb_cartao" EntitySet="tb_cartao" />
-            <End Role="tb_lancamento_despesas" EntitySet="tb_lancamento_despesas" />
-          </AssociationSet>
-          <AssociationSet Name="fk_lanca_desp_parcela" Association="BudplannModel.fk_lanca_desp_parcela">
-            <End Role="tb_parcelas" EntitySet="tb_parcelas" />
             <End Role="tb_lancamento_despesas" EntitySet="tb_lancamento_despesas" />
           </AssociationSet>
           <AssociationSet Name="fk_lanca_desp_segmento" Association="BudplannModel.fk_lanca_desp_segmento">
@@ -214,6 +257,22 @@
           <AssociationSet Name="fk_lanca_desp_user" Association="BudplannModel.fk_lanca_desp_user">
             <End Role="tb_usuario" EntitySet="tb_usuario" />
             <End Role="tb_lancamento_despesas" EntitySet="tb_lancamento_despesas" />
+          </AssociationSet>
+          <EntitySet Name="tb_lancamento_receitas" EntityType="BudplannModel.tb_lancamento_receitas" />
+          <AssociationSet Name="fk_lanca_receit_user" Association="BudplannModel.fk_lanca_receit_user">
+            <End Role="tb_usuario" EntitySet="tb_usuario" />
+            <End Role="tb_lancamento_receitas" EntitySet="tb_lancamento_receitas" />
+          </AssociationSet>
+          <EntitySet Name="sysdiagrams" EntityType="BudplannModel.sysdiagrams" />
+          <EntitySet Name="tb_competencia" EntityType="BudplannModel.tb_competencia" />
+          <EntitySet Name="tb_parcelas" EntityType="BudplannModel.tb_parcelas" />
+          <AssociationSet Name="fk_lanca_desp_parcelas" Association="BudplannModel.fk_lanca_desp_parcelas">
+            <End Role="tb_parcelas" EntitySet="tb_parcelas" />
+            <End Role="tb_lancamento_despesas" EntitySet="tb_lancamento_despesas" />
+          </AssociationSet>
+          <AssociationSet Name="fk_parcelas" Association="BudplannModel.fk_parcelas">
+            <End Role="tb_usuario" EntitySet="tb_usuario" />
+            <End Role="tb_parcelas" EntitySet="tb_parcelas" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="tb_usuario">
@@ -227,8 +286,9 @@
           <Property Name="cpf" Type="String" MaxLength="11" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="tb_cartao" Relationship="BudplannModel.fk_cartao" FromRole="tb_usuario" ToRole="tb_cartao" />
           <NavigationProperty Name="tb_segmento" Relationship="BudplannModel.fk_segmento" FromRole="tb_usuario" ToRole="tb_segmento" />
-          <NavigationProperty Name="tb_parcelas" Relationship="BudplannModel.fk_parcelas" FromRole="tb_usuario" ToRole="tb_parcelas" />
           <NavigationProperty Name="tb_lancamento_despesas" Relationship="BudplannModel.fk_lanca_desp_user" FromRole="tb_usuario" ToRole="tb_lancamento_despesas" />
+          <NavigationProperty Name="tb_lancamento_receitas" Relationship="BudplannModel.fk_lanca_receit_user" FromRole="tb_usuario" ToRole="tb_lancamento_receitas" />
+          <NavigationProperty Name="tb_parcelas" Relationship="BudplannModel.fk_parcelas" FromRole="tb_usuario" ToRole="tb_parcelas" />
         </EntityType>
         <EntityType Name="tb_cartao">
           <Key>
@@ -241,6 +301,7 @@
           <Property Name="cd_user" Type="Int32" Nullable="false" />
           <NavigationProperty Name="tb_usuario" Relationship="BudplannModel.fk_cartao" FromRole="tb_cartao" ToRole="tb_usuario" />
           <NavigationProperty Name="tb_lancamento_despesas" Relationship="BudplannModel.fk_lanca_desp_cartao" FromRole="tb_cartao" ToRole="tb_lancamento_despesas" />
+          <Property Name="ds_inativo" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <Association Name="fk_cartao">
           <End Type="BudplannModel.tb_usuario" Role="tb_usuario" Multiplicity="1" />
@@ -263,6 +324,8 @@
           <Property Name="cd_user" Type="Int32" />
           <NavigationProperty Name="tb_usuario" Relationship="BudplannModel.fk_segmento" FromRole="tb_segmento" ToRole="tb_usuario" />
           <NavigationProperty Name="tb_lancamento_despesas" Relationship="BudplannModel.fk_lanca_desp_segmento" FromRole="tb_segmento" ToRole="tb_lancamento_despesas" />
+          <Property Name="ds_ativo" Type="Boolean" />
+          <Property Name="ds_inativo" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <Association Name="fk_segmento">
           <End Type="BudplannModel.tb_usuario" Role="tb_usuario" Multiplicity="0..1" />
@@ -272,28 +335,6 @@
               <PropertyRef Name="cd_user" />
             </Principal>
             <Dependent Role="tb_segmento">
-              <PropertyRef Name="cd_user" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="tb_parcelas">
-          <Key>
-            <PropertyRef Name="cd_parcela" />
-          </Key>
-          <Property Name="cd_parcela" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="nr_parcelas" Type="Int32" Nullable="false" />
-          <Property Name="cd_user" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="tb_usuario" Relationship="BudplannModel.fk_parcelas" FromRole="tb_parcelas" ToRole="tb_usuario" />
-          <NavigationProperty Name="tb_lancamento_despesas" Relationship="BudplannModel.fk_lanca_desp_parcela" FromRole="tb_parcelas" ToRole="tb_lancamento_despesas" />
-        </EntityType>
-        <Association Name="fk_parcelas">
-          <End Type="BudplannModel.tb_usuario" Role="tb_usuario" Multiplicity="1" />
-          <End Type="BudplannModel.tb_parcelas" Role="tb_parcelas" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tb_usuario">
-              <PropertyRef Name="cd_user" />
-            </Principal>
-            <Dependent Role="tb_parcelas">
               <PropertyRef Name="cd_user" />
             </Dependent>
           </ReferentialConstraint>
@@ -314,10 +355,10 @@
           <Property Name="cd_segmento" Type="Int32" />
           <Property Name="cd_user" Type="Int32" Nullable="false" />
           <NavigationProperty Name="tb_cartao" Relationship="BudplannModel.fk_lanca_desp_cartao" FromRole="tb_lancamento_despesas" ToRole="tb_cartao" />
-          <NavigationProperty Name="tb_parcelas" Relationship="BudplannModel.fk_lanca_desp_parcela" FromRole="tb_lancamento_despesas" ToRole="tb_parcelas" />
           <NavigationProperty Name="tb_segmento" Relationship="BudplannModel.fk_lanca_desp_segmento" FromRole="tb_lancamento_despesas" ToRole="tb_segmento" />
           <NavigationProperty Name="tb_usuario" Relationship="BudplannModel.fk_lanca_desp_user" FromRole="tb_lancamento_despesas" ToRole="tb_usuario" />
           <Property Name="ds_valor" Type="Decimal" Precision="19" Scale="4" />
+          <NavigationProperty Name="tb_parcelas" Relationship="BudplannModel.fk_lanca_desp_parcelas" FromRole="tb_lancamento_despesas" ToRole="tb_parcelas" />
         </EntityType>
         <Association Name="fk_lanca_desp_cartao">
           <End Type="BudplannModel.tb_cartao" Role="tb_cartao" Multiplicity="0..1" />
@@ -328,18 +369,6 @@
             </Principal>
             <Dependent Role="tb_lancamento_despesas">
               <PropertyRef Name="cd_cartao" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="fk_lanca_desp_parcela">
-          <End Type="BudplannModel.tb_parcelas" Role="tb_parcelas" Multiplicity="0..1" />
-          <End Type="BudplannModel.tb_lancamento_despesas" Role="tb_lancamento_despesas" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="tb_parcelas">
-              <PropertyRef Name="cd_parcela" />
-            </Principal>
-            <Dependent Role="tb_lancamento_despesas">
-              <PropertyRef Name="cd_parcela" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -367,6 +396,83 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="tb_lancamento_receitas">
+          <Key>
+            <PropertyRef Name="cd_lancamento_receita" />
+          </Key>
+          <Property Name="cd_lancamento_receita" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ds_origem_receita" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="dt_recebimento" Type="DateTime" Precision="0" />
+          <Property Name="ds_competencia" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ds_valor" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="cd_user" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="tb_usuario" Relationship="BudplannModel.fk_lanca_receit_user" FromRole="tb_lancamento_receitas" ToRole="tb_usuario" />
+          <Property Name="ds_receita" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="fk_lanca_receit_user">
+          <End Type="BudplannModel.tb_usuario" Role="tb_usuario" Multiplicity="1" />
+          <End Type="BudplannModel.tb_lancamento_receitas" Role="tb_lancamento_receitas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tb_usuario">
+              <PropertyRef Name="cd_user" />
+            </Principal>
+            <Dependent Role="tb_lancamento_receitas">
+              <PropertyRef Name="cd_user" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="tb_competencia">
+          <Key>
+            <PropertyRef Name="cd_competencia" />
+          </Key>
+          <Property Name="cd_competencia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="dt_competencia" Type="DateTime" Precision="0" />
+        </EntityType>
+        <EntityType Name="tb_parcelas">
+          <Key>
+            <PropertyRef Name="cd_parcela" />
+          </Key>
+          <Property Name="cd_parcela" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nr_parcelas" Type="Int32" Nullable="false" />
+          <Property Name="cd_user" Type="Int32" Nullable="false" />
+          <Property Name="ds_inativo" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="tb_lancamento_despesas" Relationship="BudplannModel.fk_lanca_desp_parcelas" FromRole="tb_parcelas" ToRole="tb_lancamento_despesas" />
+          <NavigationProperty Name="tb_usuario" Relationship="BudplannModel.fk_parcelas" FromRole="tb_parcelas" ToRole="tb_usuario" />
+        </EntityType>
+        <Association Name="fk_lanca_desp_parcelas">
+          <End Type="BudplannModel.tb_parcelas" Role="tb_parcelas" Multiplicity="0..1" />
+          <End Type="BudplannModel.tb_lancamento_despesas" Role="tb_lancamento_despesas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tb_parcelas">
+              <PropertyRef Name="cd_parcela" />
+            </Principal>
+            <Dependent Role="tb_lancamento_despesas">
+              <PropertyRef Name="cd_parcela" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_parcelas">
+          <End Type="BudplannModel.tb_usuario" Role="tb_usuario" Multiplicity="1" />
+          <End Type="BudplannModel.tb_parcelas" Role="tb_parcelas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tb_usuario">
+              <PropertyRef Name="cd_user" />
+            </Principal>
+            <Dependent Role="tb_parcelas">
+              <PropertyRef Name="cd_user" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -387,6 +493,7 @@
           <EntitySetMapping Name="tb_cartao">
             <EntityTypeMapping TypeName="BudplannModel.tb_cartao">
               <MappingFragment StoreEntitySet="tb_cartao">
+                <ScalarProperty Name="ds_inativo" ColumnName="ds_inativo" />
                 <ScalarProperty Name="cd_user" ColumnName="cd_user" />
                 <ScalarProperty Name="ds_tipo" ColumnName="ds_tipo" />
                 <ScalarProperty Name="dt_validade" ColumnName="dt_validade" />
@@ -398,18 +505,11 @@
           <EntitySetMapping Name="tb_segmento">
             <EntityTypeMapping TypeName="BudplannModel.tb_segmento">
               <MappingFragment StoreEntitySet="tb_segmento">
+                <ScalarProperty Name="ds_inativo" ColumnName="ds_inativo" />
+                <ScalarProperty Name="ds_ativo" ColumnName="ds_ativo" />
                 <ScalarProperty Name="cd_user" ColumnName="cd_user" />
                 <ScalarProperty Name="nm_segmento" ColumnName="nm_segmento" />
                 <ScalarProperty Name="cd_segmento" ColumnName="cd_segmento" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="tb_parcelas">
-            <EntityTypeMapping TypeName="BudplannModel.tb_parcelas">
-              <MappingFragment StoreEntitySet="tb_parcelas">
-                <ScalarProperty Name="cd_user" ColumnName="cd_user" />
-                <ScalarProperty Name="nr_parcelas" ColumnName="nr_parcelas" />
-                <ScalarProperty Name="cd_parcela" ColumnName="cd_parcela" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -428,6 +528,48 @@
                 <ScalarProperty Name="ds_origem_despesa" ColumnName="ds_origem_despesa" />
                 <ScalarProperty Name="nm_lancamento_despesa" ColumnName="nm_lancamento_despesa" />
                 <ScalarProperty Name="cd_lancamento_despesa" ColumnName="cd_lancamento_despesa" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tb_lancamento_receitas">
+            <EntityTypeMapping TypeName="BudplannModel.tb_lancamento_receitas">
+              <MappingFragment StoreEntitySet="tb_lancamento_receitas">
+                <ScalarProperty Name="ds_receita" ColumnName="ds_receita" />
+                <ScalarProperty Name="cd_user" ColumnName="cd_user" />
+                <ScalarProperty Name="ds_valor" ColumnName="ds_valor" />
+                <ScalarProperty Name="ds_competencia" ColumnName="ds_competencia" />
+                <ScalarProperty Name="dt_recebimento" ColumnName="dt_recebimento" />
+                <ScalarProperty Name="ds_origem_receita" ColumnName="ds_origem_receita" />
+                <ScalarProperty Name="cd_lancamento_receita" ColumnName="cd_lancamento_receita" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="BudplannModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tb_competencia">
+            <EntityTypeMapping TypeName="BudplannModel.tb_competencia">
+              <MappingFragment StoreEntitySet="tb_competencia">
+                <ScalarProperty Name="dt_competencia" ColumnName="dt_competencia" />
+                <ScalarProperty Name="cd_competencia" ColumnName="cd_competencia" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tb_parcelas">
+            <EntityTypeMapping TypeName="BudplannModel.tb_parcelas">
+              <MappingFragment StoreEntitySet="tb_parcelas">
+                <ScalarProperty Name="ds_inativo" ColumnName="ds_inativo" />
+                <ScalarProperty Name="cd_user" ColumnName="cd_user" />
+                <ScalarProperty Name="nr_parcelas" ColumnName="nr_parcelas" />
+                <ScalarProperty Name="cd_parcela" ColumnName="cd_parcela" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

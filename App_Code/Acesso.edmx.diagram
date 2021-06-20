@@ -10,13 +10,17 @@
         <AssociationConnector Association="BudplannModel.fk_cartao" />
         <EntityTypeShape EntityType="BudplannModel.tb_segmento" Width="1.5" PointX="7.625" PointY="4" />
         <AssociationConnector Association="BudplannModel.fk_segmento" />
-        <EntityTypeShape EntityType="BudplannModel.tb_parcelas" Width="1.5" PointX="7.625" PointY="7.125" />
-        <AssociationConnector Association="BudplannModel.fk_parcelas" />
         <EntityTypeShape EntityType="BudplannModel.tb_lancamento_despesas" Width="1.5" PointX="9.875" PointY="3" />
         <AssociationConnector Association="BudplannModel.fk_lanca_desp_cartao" />
-        <AssociationConnector Association="BudplannModel.fk_lanca_desp_parcela" />
         <AssociationConnector Association="BudplannModel.fk_lanca_desp_segmento" />
         <AssociationConnector Association="BudplannModel.fk_lanca_desp_user" />
+        <EntityTypeShape EntityType="BudplannModel.tb_lancamento_receitas" Width="1.5" PointX="7.625" PointY="10" />
+        <AssociationConnector Association="BudplannModel.fk_lanca_receit_user" />
+        <EntityTypeShape EntityType="BudplannModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="BudplannModel.tb_competencia" Width="1.5" PointX="2.75" PointY="0.75" />
+        <EntityTypeShape EntityType="BudplannModel.tb_parcelas" Width="1.5" PointX="7.625" PointY="14.125" />
+        <AssociationConnector Association="BudplannModel.fk_lanca_desp_parcelas" />
+        <AssociationConnector Association="BudplannModel.fk_parcelas" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -34,3 +34,20 @@
     border-color: #ff0000;
     box-shadow: 1px 5px 30px rgb(195, 195, 195);
 }
+.table-condensed tr th {
+border: 0px solid #6e7bd9;
+color: white;
+background-color: #6e7bd9;
+}
+
+.table-condensed, .table-condensed tr td {
+border: 0px solid #000;
+}
+
+tr:nth-child(even) {
+background: #f8f7ff
+}
+
+tr:nth-child(odd) {
+    background: #fff;
+}

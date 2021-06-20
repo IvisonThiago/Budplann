@@ -58,6 +58,10 @@
                 <!-- fim do carousel-->
             </div>
 
+            <div class="card-body" style="margin-top: 40px">
+                Notificações 
+            </div>
+            
         </div>
     </form>
     <!-- JavaScript (Opcional) -->

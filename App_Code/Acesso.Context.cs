@@ -26,6 +26,9 @@ public partial class BudplannEntities : DbContext
     public virtual DbSet<tb_usuario> tb_usuario { get; set; }
     public virtual DbSet<tb_cartao> tb_cartao { get; set; }
     public virtual DbSet<tb_segmento> tb_segmento { get; set; }
-    public virtual DbSet<tb_parcelas> tb_parcelas { get; set; }
     public virtual DbSet<tb_lancamento_despesas> tb_lancamento_despesas { get; set; }
+    public virtual DbSet<tb_lancamento_receitas> tb_lancamento_receitas { get; set; }
+    public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+    public virtual DbSet<tb_competencia> tb_competencia { get; set; }
+    public virtual DbSet<tb_parcelas> tb_parcelas { get; set; }
 }

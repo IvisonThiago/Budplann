@@ -17,8 +17,9 @@
 
 </head>
 <body style="height: 100%">
+            <form runat="server">
     <div>
-        <form runat="server">
+
 
             <div class="wrapper d-flex align-items-stretch">
                 <nav id="sidebar" style="background-color: #0f0137">
@@ -35,26 +36,26 @@
                                         <a href="lancamentos.aspx" target="iframeHome">Despesas</a>
                                     </li>
                                     <li>
-                                        <a href="#">Receita</a>
+                                        <a href="lancamento_receitas.aspx" target="iframeHome">Receita</a>
                                     </li>
                                 </ul>
                             </li>
                             <li>
-                                <a href="cadastros.aspx" target="iframeHome">Tabelas</a>
-                            </li>
-                            <li>
-                                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Outros</a>
+                                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Tabelas</a>
                                 <ul class="collapse list-unstyled" id="homeSubmenu">
                                     <li>
-                                        <a href="lancamentos.aspx" target="iframeHome">Teste</a>
+                                        <a href="cadastro_segmentos.aspx" target="iframeHome">Segmentos</a>
                                     </li>
                                     <li>
-                                        <a href="#">Home 2</a>
+                                        <a href="cadastro_cartao.aspx" target="iframeHome">Cartão</a>
                                     </li>
                                     <li>
-                                        <a href="#">Home 3</a>
+                                        <a href="cadastro_parcelas.aspx" target="iframeHome">Parcelas</a>
                                     </li>
                                 </ul>
+                            </li>
+                            <li>
+                                <a href="dashboard.aspx" target="iframeHome">Dashboard</a>
                             </li>
                             <li>
                                 <asp:LinkButton runat="server" ID="btnSair" Text="Sair" OnClick="btnSair_Click"></asp:LinkButton>
@@ -64,7 +65,7 @@
                         <div class="footer">
                             <p>
                                 Copyright &copy;<script>document.write(new Date().getFullYear());</script>
-                                All rights reserved | BudPlann Gerenciamento Financeiro <i class="icon-heart" aria-hidden="true"></i>by <a href="https://colorlib.com" target="_blank">@IvisonThiago</a>
+                                All rights reserved | BudPlann Gerenciamento Financeiro <i class="icon-heart" aria-hidden="true"></i>by <a href="https://www.instagram.com/thiaguinho.ivi/" target="_blank">@IvisonThiago</a>
                             </p>
                         </div>
 
@@ -108,8 +109,9 @@
                 </div>
             </div>
 
+
+            </div>
         </form>
-    </div>
     <!-- JavaScript (Opcional) -->
     <!-- jQuery primeiro, depois Popper.js, depois Bootstrap JS -->
     <script src="menu/js/jquery.min.js"></script>

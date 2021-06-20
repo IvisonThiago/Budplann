@@ -20,7 +20,6 @@ public partial class principall : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-
             var usarioLogado = Session["Usuario"];
 
             if (usarioLogado != null)
@@ -34,6 +33,22 @@ public partial class principall : System.Web.UI.Page
                 statusUsuario.Visible = false;
                 statusUsuarioDeslogado.Visible = true;
             }
+        }
+    }
+    protected void Page_PreInit(object sender, EventArgs e)
+    {
+        var usarioLogado = Session["Usuario"];
+
+        if (usarioLogado != null)
+        {
+            labelUsuariologado.Text = usarioLogado.ToString();
+            statusUsuario.Visible = true;
+            statusUsuarioDeslogado.Visible = false;
+        }
+        else
+        {
+            statusUsuario.Visible = false;
+            statusUsuarioDeslogado.Visible = true;
         }
     }
     protected void btnSair_Click(object sender, EventArgs e)
