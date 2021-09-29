@@ -31,4 +31,5 @@ public partial class BudplannEntities : DbContext
     public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
     public virtual DbSet<tb_competencia> tb_competencia { get; set; }
     public virtual DbSet<tb_parcelas> tb_parcelas { get; set; }
+    public virtual DbSet<tb_notificacoes> tb_notificacoes { get; set; }
 }

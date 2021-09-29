@@ -21,6 +21,8 @@
         <EntityTypeShape EntityType="BudplannModel.tb_parcelas" Width="1.5" PointX="7.625" PointY="14.125" />
         <AssociationConnector Association="BudplannModel.fk_lanca_desp_parcelas" />
         <AssociationConnector Association="BudplannModel.fk_parcelas" />
+        <EntityTypeShape EntityType="BudplannModel.tb_notificacoes" Width="1.5" PointX="0.75" PointY="3.75" />
+        <AssociationConnector Association="BudplannModel.fk_notificacoes" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -23,45 +23,53 @@
     <form id="form1" runat="server">
         <div>
 
-            <div class="container-fluid">
-                <!-- inicio do carousel-->
-                <div class="card" id="carouselHome">
-                    <div class="card-body">
-                        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                            <ol class="carousel-indicators">
-                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                            </ol>
-                            <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <img class="d-block w-100" src="img/finan01.jpg" alt="Primeiro Slide" />
-                                </div>
-                                <div class="carousel-item">
-                                    <img class="d-block w-100" src="img/finan02.jpg" alt="Segundo Slide" />
-                                </div>
-                                <div class="carousel-item">
-                                    <img class="d-block w-100" src="img/finan03.png" alt="Terceiro Slide" />
-                                </div>
+            <!-- inicio do carousel-->
+            <div class="card" id="carouselHome">
+                <div class="card-body">
+                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                        </ol>
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img class="d-block w-100" src="img/finan01.jpg" alt="Primeiro Slide" />
                             </div>
-                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="sr-only">Anterior</span>
-                            </a>
-                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="sr-only">Próximo</span>
-                            </a>
+                            <div class="carousel-item">
+                                <img class="d-block w-100" src="img/finan02.jpg" alt="Segundo Slide" />
+                            </div>
+                            <div class="carousel-item">
+                                <img class="d-block w-100" src="img/finan03.png" alt="Terceiro Slide" />
+                            </div>
                         </div>
+                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Anterior</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Próximo</span>
+                        </a>
                     </div>
                 </div>
-                <!-- fim do carousel-->
+            </div>
+            <!-- fim do carousel-->
+
+            <div class="card-body" style="margin-top: 25px">
+                <div class="form-row">
+                    <div runat="server" id="divNotific" class="form-group col-md-6" style="overflow-y: auto; height: 280px">
+                        <div id="table_div"></div>
+                    </div>
+                    <div class="form-group col-md-6">
+                    </div>
+                </div>
+
+
+
+
             </div>
 
-            <div class="card-body" style="margin-top: 40px">
-                Notificações 
-            </div>
-            
         </div>
     </form>
     <!-- JavaScript (Opcional) -->
@@ -71,6 +79,20 @@
     <script src="Scripts/popper.min.js"></script>
     <script src="Bootstrap/js/bootstrap.min.js"></script>
     <script src="js/navBar23Animada.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['table'] });
+        google.charts.setOnLoadCallback(drawTable);
+
+        function drawTable() {
+            var data = new google.visualization.arrayToDataTable(<%=tabelaNotificacao()%>);
+
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+
+            table.draw(data, { showRowNumber: true, width: '100%', height: '100%' });
+
+        }
+    </script>
 
 </body>
 </html>

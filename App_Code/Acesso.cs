@@ -77,6 +77,16 @@ public partial class tb_lancamento_receitas
     public virtual tb_usuario tb_usuario { get; set; }
 }
 
+public partial class tb_notificacoes
+{
+    public int cd_notificacao { get; set; }
+    public string nm_notificacao { get; set; }
+    public Nullable<System.DateTime> dt_notificacao { get; set; }
+    public int cd_user { get; set; }
+
+    public virtual tb_usuario tb_usuario { get; set; }
+}
+
 public partial class tb_parcelas
 {
     public tb_parcelas()
@@ -119,6 +129,7 @@ public partial class tb_usuario
         this.tb_lancamento_despesas = new HashSet<tb_lancamento_despesas>();
         this.tb_lancamento_receitas = new HashSet<tb_lancamento_receitas>();
         this.tb_parcelas = new HashSet<tb_parcelas>();
+        this.tb_notificacoes = new HashSet<tb_notificacoes>();
     }
 
     public int cd_user { get; set; }
@@ -132,4 +143,5 @@ public partial class tb_usuario
     public virtual ICollection<tb_lancamento_despesas> tb_lancamento_despesas { get; set; }
     public virtual ICollection<tb_lancamento_receitas> tb_lancamento_receitas { get; set; }
     public virtual ICollection<tb_parcelas> tb_parcelas { get; set; }
+    public virtual ICollection<tb_notificacoes> tb_notificacoes { get; set; }
 }

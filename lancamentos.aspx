@@ -78,18 +78,23 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group col-md-6">
+                                            <div class="form-group col-md-4">
                                                 <label for="ddlCartao">Cartão</label>
                                                 <asp:DropDownList ID="ddlCartao" runat="server" CssClass="form-control"></asp:DropDownList>
                                             </div>
-                                        </div>
-
-                                        <div class="form-row">
-                                            <div class="form-group col-md-1">
+                                            <div class="form-group col-md-2">
                                                 <label for="ddlParcelas">Parcelas</label>
                                                 <asp:DropDownList runat="server" ID="ddlParcelas" CssClass="form-control">
                                                 </asp:DropDownList>
                                             </div>
+                                        </div>
+
+                                        <div class="form-row">
+<%--                                            <div class="form-group col-md-1">
+                                                <label for="ddlParcelas">Parcelas</label>
+                                                <asp:DropDownList runat="server" ID="ddlParcelas" CssClass="form-control">
+                                                </asp:DropDownList>
+                                            </div>--%>
                                             <div class="form-group col-md-3">
                                                 <label for="dtLancamento">Data</label>
                                                 <input runat="server" type="date" class="form-control" id="dtLancamento" />
@@ -112,13 +117,20 @@
                                                     <asp:ListItem Value="12" Text="Dezembro"></asp:ListItem>
                                                 </asp:DropDownList>
                                             </div>
-                                            <div class="form-group col-md-4">
+                                            <div class="form-group col-md-3">
                                                 <label for="ddlSegmento">Segmento</label>
                                                 <asp:DropDownList runat="server" ID="ddlSegmento" CssClass="form-control"></asp:DropDownList>
                                             </div>
                                             <div class="form-group col-md-2">
                                                 <label for="txtValor">Valor</label>
                                                 <asp:TextBox runat="server" ID="txtValor" CssClass="form-control"></asp:TextBox>
+                                            </div>
+                                            <div class="form-group col-md-2">
+                                                <label for="ddlNotificacao">Alerta</label>
+                                                <asp:DropDownList runat="server" ID="ddlNotificacao" CssClass="form-control">
+                                                    <asp:ListItem Value="0" Text="Não" Selected="True"></asp:ListItem>
+                                                    <asp:ListItem Value="1" Text="Sim"></asp:ListItem>
+                                                </asp:DropDownList>
                                             </div>
                                         </div>
 

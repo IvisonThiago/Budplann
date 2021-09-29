@@ -27,12 +27,37 @@
             <section>
 
                 <div class="card">
+                    <div class="form-row" style="margin-left: 20px; margin-top: 15px">
+                        <div class="form-group col-md-6">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <asp:DropDownList runat="server" ID="ddlFiltroGrafico2" CssClass="form-control" Style="width: 150px" ToolTip="Selecione a competência para exibir no gráfico" OnSelectedIndexChanged="ddlFiltroGrafico2_SelectedIndexChanged" AutoPostBack="true">
+                                <asp:ListItem Value="0" Text="[Selecione]" Selected="True"></asp:ListItem>
+                                <asp:ListItem Value="1" Text="Janeiro"></asp:ListItem>
+                                <asp:ListItem Value="2" Text="Fevereiro"></asp:ListItem>
+                                <asp:ListItem Value="3" Text="Março"></asp:ListItem>
+                                <asp:ListItem Value="4" Text="Abril"></asp:ListItem>
+                                <asp:ListItem Value="5" Text="Maio"></asp:ListItem>
+                                <asp:ListItem Value="6" Text="Junho"></asp:ListItem>
+                                <asp:ListItem Value="7" Text="Julho"></asp:ListItem>
+                                <asp:ListItem Value="8" Text="Agosto"></asp:ListItem>
+                                <asp:ListItem Value="9" Text="Setembro"></asp:ListItem>
+                                <asp:ListItem Value="10" Text="Outubro"></asp:ListItem>
+                                <asp:ListItem Value="11" Text="Novembro"></asp:ListItem>
+                                <asp:ListItem Value="12" Text="Dezembro"></asp:ListItem>
+                            </asp:DropDownList>
+                        </div>
+                    </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <div id="piechart" style="height: 300px"></div>
                         </div>
-                        <div class="form-group col-md-6">
+                        <div runat="server" class="form-group col-md-6" id="divGraficoPadrao">
                             <div id="piechart2" style="height: 300px"></div>
+                            <h6 class="text-danger small" style=" font-size: xx-small">Obs.: Se não for selecionada nenhuma competência, será exibida a competência vigente.</h6>
+                        </div>
+                        <div runat="server" class="form-group col-md-6" id="divGraficoFiltro">
+                            <div id="piechart2Filtro" style="height: 300px"></div>
                         </div>
                     </div>
                     <div class="form-row">
@@ -98,6 +123,19 @@
             chart.draw(data, options);
         }
     </script>
+        <script type="text/javascript">
+            google.charts.load('current', { 'packages': ['corechart'] });
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable(<%=graficSegmentoFiltro()%>);
+            var options = {
+                title: 'Despesa por Segmento/Mês',
+                is3D: true,
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('piechart2Filtro'));
+            chart.draw(data, options);
+        }
+    </script>
     <script type="text/javascript">
         google.charts.load('current', { 'packages': ['corechart'] });
         google.charts.setOnLoadCallback(drawChart);
@@ -110,20 +148,20 @@
                 hAxis: { title: 'Ano', titleTextStyle: { color: '#333' } },
                 vAxis: { title: 'Total', titleTextStyle: { color: '#333' }, minValue: 0 },
                 legend: { position: 'top', maxLines: 3 },
-            bar: { groupWidth: '75%' },
-            isStacked: true,
+                bar: { groupWidth: '75%' },
+                isStacked: true,
             };
 
             var chart = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
             chart.draw(data, options);
         }
     </script>
-        <script type="text/javascript">
-            google.charts.load('current', { 'packages': ['corechart'] });
-            google.charts.setOnLoadCallback(drawChart);
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
 
-            function drawChart() {
-                var data = google.visualization.arrayToDataTable(<%=graficSegmento3()%>);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable(<%=graficSegmento3()%>);
 
             var options = {
                 title: 'Depesa/Receita por Competência',

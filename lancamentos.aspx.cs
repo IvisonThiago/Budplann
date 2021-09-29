@@ -81,7 +81,8 @@ public partial class lancamentos : System.Web.UI.Page
         dtLancamento.Value = string.Empty; //---Ex: para limpar o <input> texbox no html5 em vez de usar o asp:text
         ddlCartao.SelectedValue = "0";
         ddlCompetencia.SelectedValue = "0";
-        ddlParcelas.SelectedValue = "1";
+        ddlParcelas.SelectedValue = null;
+        //ddlParcelas.SelectedValue = "1";
         ddlCompetencia.SelectedValue = "0";
         ddlSegmento.SelectedValue = "0";
         txtValor.Text = string.Empty;
@@ -223,8 +224,9 @@ public partial class lancamentos : System.Web.UI.Page
             using (var conexao = new BudplannEntities())
             {
                 var addLancamentoDespesas = new tb_lancamento_despesas();
-                addLancamentoDespesas.cd_user = Convert.ToInt32(codUsuario);
+                var addNotificacao = new tb_notificacoes();
 
+                addLancamentoDespesas.cd_user = Convert.ToInt32(codUsuario);
                 if (txtDespesa.Text == string.Empty)
                 {
                     divAlerta.Visible = true;
@@ -239,7 +241,16 @@ public partial class lancamentos : System.Web.UI.Page
                 addLancamentoDespesas.ds_nota_fiscal = txtNotaFical.Text;
                 if (rdCartao.Checked)
                 {
-                    addLancamentoDespesas.cd_cartao = Convert.ToInt32(ddlCartao.SelectedValue);
+                    if (ddlCartao.SelectedValue != "0")
+                    {
+                        addLancamentoDespesas.cd_cartao = Convert.ToInt32(ddlCartao.SelectedValue);
+                    }
+                    else
+                    {
+                        divAlerta.Visible = true;
+                        labelAlerta.Text = "O seu manezão. Precisa escolher um cartão.";
+                        return;
+                    }
                     addLancamentoDespesas.cd_parcela = Convert.ToInt32(ddlParcelas.SelectedValue);
                     addLancamentoDespesas.ds_forma_pagamento = "CARTAO";
                 }
@@ -260,7 +271,9 @@ public partial class lancamentos : System.Web.UI.Page
                 }
                 if (ddlCompetencia.SelectedValue == "0")
                 {
-                    addLancamentoDespesas.ds_competencia = null;
+                    divAlerta.Visible = true;
+                    labelAlerta.Text = "O seu manezão. Sem informar a competência fica difícil.";
+                    return;
                 }
                 else
                 {
@@ -283,6 +296,15 @@ public partial class lancamentos : System.Web.UI.Page
                     divAlerta.Visible = true;
                     labelAlerta.Text = "O seu manezão. Como tu quer lançar uma despesa sem informar um VALOR?";
                     return;
+                }
+
+                if (ddlNotificacao.SelectedValue == "1")
+                {
+                    addNotificacao.nm_notificacao = txtDespesa.Text;
+                    addNotificacao.dt_notificacao = Convert.ToDateTime(dtLancamento.Value);
+                    addNotificacao.cd_user = Convert.ToInt32(codUsuario);
+                    conexao.tb_notificacoes.Add(addNotificacao);
+                    conexao.SaveChanges();
                 }
 
                 conexao.tb_lancamento_despesas.Add(addLancamentoDespesas);

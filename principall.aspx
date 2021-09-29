@@ -17,9 +17,8 @@
 
 </head>
 <body style="height: 100%">
-            <form runat="server">
-    <div>
-
+    <form runat="server">
+        <div>
 
             <div class="wrapper d-flex align-items-stretch">
                 <nav id="sidebar" style="background-color: #0f0137">
@@ -110,8 +109,8 @@
             </div>
 
 
-            </div>
-        </form>
+        </div>
+    </form>
     <!-- JavaScript (Opcional) -->
     <!-- jQuery primeiro, depois Popper.js, depois Bootstrap JS -->
     <script src="menu/js/jquery.min.js"></script>

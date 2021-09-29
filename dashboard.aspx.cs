@@ -14,6 +14,7 @@ using System.Reflection;
 
 public partial class dashboard : System.Web.UI.Page
 {
+    #region Gráficos
     protected string graficSegmento3()
     {
         int codSessao = Convert.ToInt32(Session["codUser"]);
@@ -119,6 +120,43 @@ public partial class dashboard : System.Web.UI.Page
             return strDados;
         }
     }
+    protected string graficSegmentoFiltro()
+    {
+        int codSessao = Convert.ToInt32(Session["codUser"]);
+        var competeciaFiltro = ddlFiltroGrafico2.SelectedItem.ToString();
+        string strDados;
+
+        using (var conexao = new BudplannEntities())
+        {
+            var conn = conexao.Database.Connection;
+
+            var cmd = conn.CreateCommand();
+            cmd = new SqlCommand();
+            //var cmd = conn.CreateCommand();
+            cmd.CommandText = "chartSegmentoFiltro";
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Connection = conn;
+            cmd.Parameters.Add(new SqlParameter("codSessao", codSessao));
+            cmd.Parameters.Add(new SqlParameter("competeciaFiltro", competeciaFiltro));
+            conn.Open();
+
+            DataTable dt = new DataTable();
+            dt.Load(cmd.ExecuteReader());
+            conn.Close();
+
+            strDados = "[['ds_competencia','TOTAL'],";
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                strDados = strDados + "[";
+                strDados = strDados + "'" + dr[0] + "'" + "," + Convert.ToInt32(dr[1]);
+                strDados = strDados + "],";
+            }
+
+            strDados = strDados + "]";
+            return strDados;
+        }
+    }
     protected string graficCompetencia()
     {
         int codSessao = Convert.ToInt32(Session["codUser"]);
@@ -155,40 +193,29 @@ public partial class dashboard : System.Web.UI.Page
         }
 
     }
+    #endregion
 
-    //DataTable dados = new DataTable();
-
-    //int codSessao = Convert.ToInt32(Session["codUser"]);
-
-    //dados.Columns.Add(new DataColumn("Task", typeof(string)));
-    //dados.Columns.Add(new DataColumn("Hours per Day", typeof(string)));
-
-    //dados.Rows.Add(new object[] { "Combustivel", 11 });
-    //dados.Rows.Add(new object[] { "Alimentos", 20 });
-    //dados.Rows.Add(new object[] { "Roupas", 2 });
-    //dados.Rows.Add(new object[] { "Manutenção", 3 });
-    //dados.Rows.Add(new object[] { "Movéis", 1 });
-
-    //string strDados;
-
-    //strDados = "[['Task', 'Hours per Day'],";
-
-    //foreach (DataRow dr in dados.Rows)
-    //{
-    //    strDados = strDados + "[";
-    //    strDados = strDados + "'" + dr[0] + "'" + "," + dr[1];
-    //    strDados = strDados + "],";
-    //}
-    //strDados = strDados + "]";
-
-    //return strDados;
-    //}
     protected void Page_Load(object sender, EventArgs e)
-    {
+    {       
         if (!IsPostBack)
         {
+            divGraficoFiltro.Visible = false;
             graficCompetencia();
         }
     }
 
+    protected void ddlFiltroGrafico2_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (ddlFiltroGrafico2.SelectedValue != "0")
+        {
+            divGraficoPadrao.Visible = false;
+            divGraficoFiltro.Visible = true;
+            graficSegmentoFiltro();
+        }
+        else
+        {
+            divGraficoPadrao.Visible = true;
+            divGraficoFiltro.Visible = false;
+        }
+    }
 }

@@ -62,6 +62,15 @@
           <Property Name="cd_user" Type="int" Nullable="false" />
           <Property Name="ds_receita" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="tb_notificacoes">
+          <Key>
+            <PropertyRef Name="cd_notificacao" />
+          </Key>
+          <Property Name="cd_notificacao" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nm_notificacao" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="dt_notificacao" Type="date" />
+          <Property Name="cd_user" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="tb_parcelas">
           <Key>
             <PropertyRef Name="cd_parcela" />
@@ -163,6 +172,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_notificacoes">
+          <End Role="tb_usuario" Type="Self.tb_usuario" Multiplicity="1" />
+          <End Role="tb_notificacoes" Type="Self.tb_notificacoes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tb_usuario">
+              <PropertyRef Name="cd_user" />
+            </Principal>
+            <Dependent Role="tb_notificacoes">
+              <PropertyRef Name="cd_user" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_parcelas">
           <End Role="tb_usuario" Type="Self.tb_usuario" Multiplicity="1" />
           <End Role="tb_parcelas" Type="Self.tb_parcelas" Multiplicity="*" />
@@ -193,6 +214,7 @@
           <EntitySet Name="tb_competencia" EntityType="Self.tb_competencia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_lancamento_despesas" EntityType="Self.tb_lancamento_despesas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_lancamento_receitas" EntityType="Self.tb_lancamento_receitas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tb_notificacoes" EntityType="Self.tb_notificacoes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_parcelas" EntityType="Self.tb_parcelas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_segmento" EntityType="Self.tb_segmento" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="tb_usuario" EntityType="Self.tb_usuario" Schema="dbo" store:Type="Tables" />
@@ -219,6 +241,10 @@
           <AssociationSet Name="fk_lanca_receit_user" Association="Self.fk_lanca_receit_user">
             <End Role="tb_usuario" EntitySet="tb_usuario" />
             <End Role="tb_lancamento_receitas" EntitySet="tb_lancamento_receitas" />
+          </AssociationSet>
+          <AssociationSet Name="fk_notificacoes" Association="Self.fk_notificacoes">
+            <End Role="tb_usuario" EntitySet="tb_usuario" />
+            <End Role="tb_notificacoes" EntitySet="tb_notificacoes" />
           </AssociationSet>
           <AssociationSet Name="fk_parcelas" Association="Self.fk_parcelas">
             <End Role="tb_usuario" EntitySet="tb_usuario" />
@@ -274,6 +300,11 @@
             <End Role="tb_usuario" EntitySet="tb_usuario" />
             <End Role="tb_parcelas" EntitySet="tb_parcelas" />
           </AssociationSet>
+          <EntitySet Name="tb_notificacoes" EntityType="BudplannModel.tb_notificacoes" />
+          <AssociationSet Name="fk_notificacoes" Association="BudplannModel.fk_notificacoes">
+            <End Role="tb_usuario" EntitySet="tb_usuario" />
+            <End Role="tb_notificacoes" EntitySet="tb_notificacoes" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="tb_usuario">
           <Key>
@@ -289,6 +320,7 @@
           <NavigationProperty Name="tb_lancamento_despesas" Relationship="BudplannModel.fk_lanca_desp_user" FromRole="tb_usuario" ToRole="tb_lancamento_despesas" />
           <NavigationProperty Name="tb_lancamento_receitas" Relationship="BudplannModel.fk_lanca_receit_user" FromRole="tb_usuario" ToRole="tb_lancamento_receitas" />
           <NavigationProperty Name="tb_parcelas" Relationship="BudplannModel.fk_parcelas" FromRole="tb_usuario" ToRole="tb_parcelas" />
+          <NavigationProperty Name="tb_notificacoes" Relationship="BudplannModel.fk_notificacoes" FromRole="tb_usuario" ToRole="tb_notificacoes" />
         </EntityType>
         <EntityType Name="tb_cartao">
           <Key>
@@ -473,6 +505,28 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="tb_notificacoes">
+          <Key>
+            <PropertyRef Name="cd_notificacao" />
+          </Key>
+          <Property Name="cd_notificacao" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nm_notificacao" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="dt_notificacao" Type="DateTime" Precision="0" />
+          <Property Name="cd_user" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="tb_usuario" Relationship="BudplannModel.fk_notificacoes" FromRole="tb_notificacoes" ToRole="tb_usuario" />
+        </EntityType>
+        <Association Name="fk_notificacoes">
+          <End Type="BudplannModel.tb_usuario" Role="tb_usuario" Multiplicity="1" />
+          <End Type="BudplannModel.tb_notificacoes" Role="tb_notificacoes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tb_usuario">
+              <PropertyRef Name="cd_user" />
+            </Principal>
+            <Dependent Role="tb_notificacoes">
+              <PropertyRef Name="cd_user" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -570,6 +624,16 @@
                 <ScalarProperty Name="cd_user" ColumnName="cd_user" />
                 <ScalarProperty Name="nr_parcelas" ColumnName="nr_parcelas" />
                 <ScalarProperty Name="cd_parcela" ColumnName="cd_parcela" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tb_notificacoes">
+            <EntityTypeMapping TypeName="BudplannModel.tb_notificacoes">
+              <MappingFragment StoreEntitySet="tb_notificacoes">
+                <ScalarProperty Name="cd_user" ColumnName="cd_user" />
+                <ScalarProperty Name="dt_notificacao" ColumnName="dt_notificacao" />
+                <ScalarProperty Name="nm_notificacao" ColumnName="nm_notificacao" />
+                <ScalarProperty Name="cd_notificacao" ColumnName="cd_notificacao" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
